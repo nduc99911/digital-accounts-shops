@@ -1,9 +1,12 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import ProductCard from './_ui/ProductCard'
+import { getCurrentCustomer } from '@/lib/customerAuth'
 
 export default async function Home() {
   const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
+
+  const customer = await getCurrentCustomer()
 
   const categories = await prisma.category.findMany({
     orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
@@ -45,13 +48,26 @@ export default async function Home() {
             </div>
           </div>
 
-          <nav className="flex items-center gap-3 text-sm">
+          <nav className="flex items-center gap-2 text-sm">
             <Link href="/cart" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
               Giỏ hàng
             </Link>
-            <Link href="/account/orders" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-              Tài khoản
-            </Link>
+
+            {customer ? (
+              <>
+                <Link href="/account/orders" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
+                  Đơn hàng
+                </Link>
+                <form action="/api/auth/logout" method="post">
+                  <button className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">Đăng xuất</button>
+                </form>
+              </>
+            ) : (
+              <Link href="/login" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
+                Đăng nhập
+              </Link>
+            )}
+
             <Link href="/admin" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
               Admin
             </Link>
