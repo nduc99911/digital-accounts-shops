@@ -62,6 +62,8 @@ model Product {
   warranty      WarrantyType @default(FULL)
   active        Boolean      @default(true)
   orderItems    OrderItem[]
+  stockItems    StockItem[]
+  fulfillments  OrderFulfillment[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
