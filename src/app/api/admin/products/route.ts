@@ -9,7 +9,7 @@ function parseWarranty(s: string) {
 }
 
 export async function POST(req: Request) {
-  if (!isAuthed()) return NextResponse.json({ ok: false }, { status: 401 })
+  if (!(await isAuthed())) return NextResponse.json({ ok: false }, { status: 401 })
 
   const form = await req.formData()
   const name = String(form.get('name') || '').trim()

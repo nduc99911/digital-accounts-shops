@@ -3,7 +3,7 @@ import { isAuthed } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export default async function PaymentSettingsPage() {
-  if (!isAuthed()) redirect('/admin/login')
+  if (!(await isAuthed())) redirect('/admin/login')
 
   const s = await prisma.paymentSetting.findFirst({ orderBy: { createdAt: 'desc' } })
 

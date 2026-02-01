@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
 
-export default function NewCategory() {
-  if (!isAuthed()) redirect('/admin/login')
+export default async function NewCategory() {
+  if (!(await isAuthed())) redirect('/admin/login')
 
   return (
     <div className="rounded-lg bg-white p-5 shadow-sm">

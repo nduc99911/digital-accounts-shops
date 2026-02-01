@@ -4,7 +4,7 @@ import { isAuthed } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export default async function AdminCategories() {
-  if (!isAuthed()) redirect('/admin/login')
+  if (!(await isAuthed())) redirect('/admin/login')
 
   const categories = await prisma.category.findMany({
     orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],

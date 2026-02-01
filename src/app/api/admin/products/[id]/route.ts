@@ -9,7 +9,7 @@ function parseWarranty(s: string) {
 }
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  if (!isAuthed()) return NextResponse.json({ ok: false }, { status: 401 })
+  if (!(await isAuthed())) return NextResponse.json({ ok: false }, { status: 401 })
   const { id } = await ctx.params
 
   const url = new URL(req.url)

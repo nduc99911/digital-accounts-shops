@@ -3,16 +3,19 @@ import { cookies } from 'next/headers'
 
 const COOKIE_NAME = 'buile_admin'
 
-export function isAuthed() {
-  const c = cookies().get(COOKIE_NAME)?.value
-  return c === '1'
+// Next.js 16+ dynamic APIs: cookies() is async
+async function cookieStore() {
+  return cookies()
 }
 
-export function requireAuth() {
-  if (!isAuthed()) {
-    return false
-  }
-  return true
+export async function isAuthed() {
+  const c = await cookieStore()
+  const v = c.get(COOKIE_NAME)?.value
+  return v === '1'
+}
+
+export async function requireAuth() {
+  return isAuthed()
 }
 
 export async function verifyPassword(password: string, hash: string) {
@@ -24,8 +27,9 @@ export async function hashPassword(password: string) {
   return bcrypt.hash(password, salt)
 }
 
-export function setAuthCookie() {
-  cookies().set(COOKIE_NAME, '1', {
+export async function setAuthCookie() {
+  const c = await cookieStore()
+  c.set(COOKIE_NAME, '1', {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -34,8 +38,9 @@ export function setAuthCookie() {
   })
 }
 
-export function clearAuthCookie() {
-  cookies().set(COOKIE_NAME, '', {
+export async function clearAuthCookie() {
+  const c = await cookieStore()
+  c.set(COOKIE_NAME, '', {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',

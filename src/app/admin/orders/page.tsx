@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import StatusActions from './StatusActions'
 
 export default async function AdminOrders() {
-  if (!isAuthed()) redirect('/admin/login')
+  if (!(await isAuthed())) redirect('/admin/login')
 
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: 'desc' },

@@ -13,6 +13,6 @@ export async function POST(req: Request) {
   const ok = await verifyPassword(password, user.passwordHash)
   if (!ok) return NextResponse.json({ ok: false }, { status: 401 })
 
-  setAuthCookie()
+  await setAuthCookie()
   return NextResponse.json({ ok: true })
 }

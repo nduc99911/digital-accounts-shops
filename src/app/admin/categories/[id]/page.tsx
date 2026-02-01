@@ -3,7 +3,7 @@ import { isAuthed } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export default async function EditCategory({ params }: { params: Promise<{ id: string }> }) {
-  if (!isAuthed()) redirect('/admin/login')
+  if (!(await isAuthed())) redirect('/admin/login')
 
   const { id } = await params
   const c = await prisma.category.findUnique({ where: { id } })

@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
 
-export default function AdminHome() {
-  if (!isAuthed()) {
+export default async function AdminHome() {
+  if (!(await isAuthed())) {
     redirect('/admin/login')
   }
 
