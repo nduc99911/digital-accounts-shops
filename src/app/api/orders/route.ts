@@ -14,16 +14,11 @@ export async function POST(req: Request) {
   if (items.length === 0) return NextResponse.json({ error: 'Giỏ hàng trống' }, { status: 400 })
 
   // Re-price from DB to avoid tampering
-  const productIds = [
-    ...new Set(
-      items
-        .map((it: unknown) => {
-          const obj = it as { productId?: unknown }
-          return String(obj?.productId || '')
-        })
-        .filter((s: string) => Boolean(s)),
-    ),
-  ]
+  const rawIds: string[] = items
+    .map((it: unknown) => String((it as { productId?: unknown })?.productId || ''))
+    .filter((s): s is string => Boolean(s))
+
+  const productIds: string[] = Array.from(new Set(rawIds))
   const products = await prisma.product.findMany({ where: { id: { in: productIds }, active: true } })
   const byId = new Map(products.map((p) => [p.id, p]))
 

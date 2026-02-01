@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import ProductCard from '@/app/_ui/ProductCard'
 import ProductSearchControls from '@/app/_ui/ProductSearchControls'
 import Pagination from '@/app/_ui/Pagination'
+import SiteHeader from '@/app/_ui/SiteHeader'
 
 function toInt(v: string | undefined, fallback: number) {
   const n = Number(v)
@@ -90,18 +91,7 @@ export default async function SearchPage({
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <header className="sticky top-0 z-50 bg-blue-700 text-white shadow">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
-          <Link href="/" className="text-lg font-extrabold tracking-tight">
-            Trang chủ
-          </Link>
-          <div className="text-sm font-semibold text-white/90">/ Tìm kiếm</div>
-          <div className="flex-1" />
-          <Link href="/cart" className="rounded-md bg-white/15 px-3 py-2 text-sm font-semibold hover:bg-white/20">
-            Giỏ hàng
-          </Link>
-        </div>
-      </header>
+      <SiteHeader initialQuery={q} />
 
       <main className="mx-auto grid max-w-6xl gap-4 p-4">
         <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
@@ -109,7 +99,9 @@ export default async function SearchPage({
           <div className="mt-1 text-sm text-slate-600">Nhập từ khoá, lọc theo danh mục, giá và sắp xếp.</div>
         </div>
 
-        <ProductSearchControls basePath="/search" showCategory categories={categories} />
+        <div className="sticky top-[72px] z-40">
+          <ProductSearchControls basePath="/search" showCategory categories={categories} />
+        </div>
 
         <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -157,6 +149,7 @@ export default async function SearchPage({
                     salePriceVnd: p.salePriceVnd,
                     soldQty: p.soldQty,
                     imageUrl: p.imageUrl ?? null,
+                    stockQty: p.stockQty,
                   }}
                 />
               ))}
@@ -164,7 +157,20 @@ export default async function SearchPage({
           )}
         </div>
 
-        <Pagination basePath="/search" searchParams={sp} page={page} totalPages={totalPages} />
+        <div className="pb-6">
+          <Pagination
+            basePath="/search"
+            params={{
+              q: q || undefined,
+              sort: sort || undefined,
+              cat: cat || undefined,
+              min: min != null ? String(min) : undefined,
+              max: max != null ? String(max) : undefined,
+            }}
+            page={page}
+            totalPages={totalPages}
+          />
+        </div>
       </main>
     </div>
   )

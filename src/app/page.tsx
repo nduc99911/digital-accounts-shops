@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import ProductCard from './_ui/ProductCard'
 import SiteHeader from './_ui/SiteHeader'
-import SiteHeader from './_ui/SiteHeader'
 
 export default async function Home() {
   const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
