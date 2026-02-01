@@ -157,20 +157,7 @@ export default async function SearchPage({
           )}
         </div>
 
-        <div className="pb-6">
-          <Pagination
-            basePath="/search"
-            params={{
-              q: q || undefined,
-              sort: sort || undefined,
-              cat: cat || undefined,
-              min: min != null ? String(min) : undefined,
-              max: max != null ? String(max) : undefined,
-            }}
-            page={page}
-            totalPages={totalPages}
-          />
-        </div>
+        <Pagination basePath="/search" searchParams={sp} page={page} totalPages={totalPages} />
       </main>
     </div>
   )
