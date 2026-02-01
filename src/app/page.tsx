@@ -30,9 +30,9 @@ export default async function Home() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div id="top" className="min-h-screen bg-slate-100">
       {/* Top header */}
-      <header className="bg-blue-700 text-white">
+      <header className="sticky top-0 z-50 bg-blue-700 text-white shadow">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
           <Link href="/" className="text-lg font-extrabold tracking-tight">
             {shopName}
@@ -75,11 +75,28 @@ export default async function Home() {
         </div>
       </header>
 
+      {/* Category chips (mobile + desktop) */}
+      <div className="border-b bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-2">
+          <div className="flex gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm">
+            {categories.map((c) => (
+              <a
+                key={c.id}
+                href={`#cat-${c.slug}`}
+                className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+              >
+                {c.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Main layout */}
       <main className="mx-auto grid max-w-6xl gap-4 p-4 md:grid-cols-[240px_1fr]">
         {/* Sidebar */}
         <aside className="hidden md:block">
-          <div className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+          <div className="sticky top-[72px] overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
             <div className="bg-slate-50 px-4 py-3 text-sm font-semibold">Danh mục</div>
             <div className="p-2">
               {categories.length === 0 ? (
@@ -90,7 +107,7 @@ export default async function Home() {
                     <a
                       key={c.id}
                       href={`#cat-${c.slug}`}
-                      className="rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                      className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
                     >
                       {c.name}
                     </a>
@@ -106,6 +123,8 @@ export default async function Home() {
           {/* Banner */}
           <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
             <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-700 via-blue-700 to-cyan-600 p-6 text-white shadow-sm">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+              <div className="pointer-events-none absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
               <div className="text-2xl font-extrabold">Tài khoản số • Giá tốt • Dùng ngay</div>
               <div className="mt-2 text-sm text-white/90">
                 Chuyển khoản nhanh • Admin xác nhận thủ công • Bảo hành tuỳ gói
