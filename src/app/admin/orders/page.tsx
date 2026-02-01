@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import StatusActions from './StatusActions'
 
 export default async function AdminOrders() {
   if (!isAuthed()) redirect('/admin/login')
@@ -8,7 +9,7 @@ export default async function AdminOrders() {
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: 'desc' },
     include: { items: { include: { product: true } } },
-    take: 100,
+    take: 200,
   })
 
   return (
@@ -28,14 +29,24 @@ export default async function AdminOrders() {
           </thead>
           <tbody>
             {orders.map((o) => (
-              <tr key={o.id} className="border-t">
+              <tr key={o.id} className="border-t align-top">
                 <td className="p-3 font-medium">{o.code}</td>
                 <td className="p-3">
-                  <div>{o.customerName}</div>
+                  <div className="font-medium">{o.customerName}</div>
                   <div className="text-xs text-slate-500">{o.zalo || o.phone || o.email || ''}</div>
+                  {o.note ? <div className="mt-2 text-xs text-slate-600">Note: {o.note}</div> : null}
+                  <div className="mt-2 text-xs text-slate-500">
+                    {o.items.map((it) => (
+                      <div key={it.id}>
+                        • {it.product.name} x{it.qty}
+                      </div>
+                    ))}
+                  </div>
                 </td>
                 <td className="p-3">{o.totalVnd.toLocaleString('vi-VN')}</td>
-                <td className="p-3">{o.status}</td>
+                <td className="p-3">
+                  <StatusActions id={o.id} status={o.status as any} />
+                </td>
                 <td className="p-3">{new Date(o.createdAt).toLocaleString('vi-VN')}</td>
               </tr>
             ))}
@@ -44,7 +55,7 @@ export default async function AdminOrders() {
       </div>
 
       <div className="text-xs text-slate-500">
-        Gợi ý: bản MVP hiện dùng chuyển khoản QR và admin tự xử lý/giao hàng.
+        Flow MVP: khách tạo đơn → trạng thái PENDING_PAYMENT → admin check bank và mark SUCCESS.
       </div>
     </div>
   )

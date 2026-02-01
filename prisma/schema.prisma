@@ -21,10 +21,8 @@ enum PaymentMethod {
 }
 
 enum OrderStatus {
-  PENDING
-  PAID
-  FULFILLED
-  CANCELLED
+  PENDING_PAYMENT
+  SUCCESS
 }
 
 model AdminUser {
@@ -73,7 +71,7 @@ model Order {
   note          String?
   totalVnd      Int
   paymentMethod PaymentMethod @default(BANK_TRANSFER)
-  status        OrderStatus   @default(PENDING)
+  status        OrderStatus   @default(PENDING_PAYMENT)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   items         OrderItem[]
