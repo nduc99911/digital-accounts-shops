@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  // keep default output to node_modules/.prisma for compatibility
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum WarrantyType {
+  FULL
+  LIMITED
+  NONE
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  name         String
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  sortOrder Int       @default(0)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  categoryId  String?
+  category    Category?    @relation(fields: [categoryId], references: [id])
+  shortDesc   String?
+  description String?
+  priceVnd    Int
+  duration    String? // e.g. "1 tháng", "6 tháng", "1 năm"
+  warranty    WarrantyType @default(FULL)
+  active      Boolean      @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  code          String        @unique
+  customerName  String
+  phone         String?
+  zalo          String?
+  email         String?
+  note          String?
+  totalVnd      Int
+  paymentMethod PaymentMethod @default(BANK_TRANSFER)
+  status        OrderStatus   @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  qty       Int      @default(1)
+  unitVnd   Int
+  createdAt DateTime @default(now())
+}
