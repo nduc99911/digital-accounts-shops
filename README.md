@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# digital-accounts-shops
 
-## Getting Started
+DivineShop-like storefront for selling digital accounts/keys.
 
-First, run the development server:
+## Local dev (Postgres)
 
+### 1) Create `.env`
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2) Start Postgres
+Use any Postgres instance you have (local install, VPS, etc.).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create database:
+- `digital_accounts_shops`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Default local DATABASE_URL example:
+```
+postgresql://postgres:postgres@localhost:5432/digital_accounts_shops?schema=public
+```
 
-## Learn More
+### 3) Install deps
+```bash
+npm i
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 4) Migrate
+```bash
+npm run db:migrate
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5) Run dev
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Admin
+- URL: `/admin/login`
+- Default credentials are read from `.env`:
+  - `ADMIN_USERNAME`
+  - `ADMIN_PASSWORD`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+- This repo targets **Postgres** (not SQLite).
