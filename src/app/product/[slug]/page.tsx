@@ -39,9 +39,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <div><span className="text-slate-500">Bảo hành:</span> {p.warranty}</div>
           </div>
 
-          <div className="mt-5 flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-600">{formatVnd(p.priceVnd)}</div>
-            <AddToCartButton productId={p.id} name={p.name} priceVnd={p.priceVnd} />
+          <div className="mt-5 flex items-center justify-between gap-4">
+            <div>
+              <div className="text-2xl font-extrabold text-rose-600">{formatVnd(p.salePriceVnd)}</div>
+              <div className="mt-1 text-sm text-slate-500 line-through">{formatVnd(p.listPriceVnd)}</div>
+              <div className="mt-1 text-xs text-slate-500">
+                Tồn kho: <b>{p.stockQty}</b> • Đã bán: <b>{p.soldQty}</b>
+              </div>
+            </div>
+            <AddToCartButton productId={p.id} name={p.name} priceVnd={p.salePriceVnd} />
           </div>
 
             {p.description && (

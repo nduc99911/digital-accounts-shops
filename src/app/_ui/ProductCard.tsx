@@ -9,11 +9,14 @@ export default function ProductCard({
     slug: string
     name: string
     duration: string | null
-    priceVnd: number
+    listPriceVnd: number
+    salePriceVnd: number
+    soldQty: number
     imageUrl: string | null
   }
 }) {
   const img = p.imageUrl || `https://picsum.photos/seed/${p.slug}/600/450`
+  const discount = p.listPriceVnd > 0 ? Math.max(0, Math.round((1 - p.salePriceVnd / p.listPriceVnd) * 100)) : 0
 
   return (
     <Link
@@ -26,7 +29,11 @@ export default function ProductCard({
 
         <div className="absolute left-2 top-2 flex gap-1">
           <span className="rounded bg-blue-600 px-2 py-1 text-[11px] font-semibold text-white">Hot</span>
-          <span className="rounded bg-rose-600 px-2 py-1 text-[11px] font-semibold text-white">Sale</span>
+          {discount > 0 ? (
+            <span className="rounded bg-rose-600 px-2 py-1 text-[11px] font-semibold text-white">-{discount}%</span>
+          ) : (
+            <span className="rounded bg-rose-600 px-2 py-1 text-[11px] font-semibold text-white">Sale</span>
+          )}
         </div>
       </div>
 
@@ -35,8 +42,12 @@ export default function ProductCard({
           {p.name}
         </div>
         <div className="mt-1 text-xs text-slate-500">{p.duration || 'Gói'}</div>
-        <div className="mt-3 flex items-center justify-between">
-          <div className="text-base font-extrabold text-rose-600">{formatVnd(p.priceVnd)}</div>
+        <div className="mt-3 flex items-end justify-between">
+          <div>
+            <div className="text-base font-extrabold text-rose-600">{formatVnd(p.salePriceVnd)}</div>
+            <div className="text-xs text-slate-500 line-through">{formatVnd(p.listPriceVnd)}</div>
+            <div className="mt-1 text-[11px] text-slate-500">Đã bán: {p.soldQty}</div>
+          </div>
           <div className="rounded-md bg-slate-900 px-2 py-1 text-xs font-semibold text-white">Mua ngay</div>
         </div>
       </div>

@@ -23,7 +23,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const form = await req.formData()
   const name = String(form.get('name') || '').trim()
   const slug = String(form.get('slug') || '').trim()
-  const priceVnd = Number(String(form.get('priceVnd') || '0').trim())
+  const listPriceVnd = Number(String(form.get('listPriceVnd') || '0').trim())
+  const salePriceVnd = Number(String(form.get('salePriceVnd') || '0').trim())
+  const stockQty = Number(String(form.get('stockQty') || '0').trim())
+  const soldQty = Number(String(form.get('soldQty') || '0').trim())
+
   const categoryIdRaw = String(form.get('categoryId') || '').trim()
   const categoryId = categoryIdRaw || null
   const duration = String(form.get('duration') || '').trim() || null
@@ -38,7 +42,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     data: {
       name,
       slug,
-      priceVnd,
+      listPriceVnd,
+      salePriceVnd,
+      stockQty: Math.max(0, Math.trunc(stockQty)),
+      soldQty: Math.max(0, Math.trunc(soldQty)),
       categoryId,
       duration,
       warranty,

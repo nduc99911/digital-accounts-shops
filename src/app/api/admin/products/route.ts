@@ -14,7 +14,10 @@ export async function POST(req: Request) {
   const form = await req.formData()
   const name = String(form.get('name') || '').trim()
   const slug = String(form.get('slug') || '').trim()
-  const priceVnd = Number(String(form.get('priceVnd') || '0').trim())
+  const listPriceVnd = Number(String(form.get('listPriceVnd') || '0').trim())
+  const salePriceVnd = Number(String(form.get('salePriceVnd') || '0').trim())
+  const stockQty = Number(String(form.get('stockQty') || '0').trim())
+
   const categoryIdRaw = String(form.get('categoryId') || '').trim()
   const categoryId = categoryIdRaw || null
   const duration = String(form.get('duration') || '').trim() || null
@@ -24,7 +27,13 @@ export async function POST(req: Request) {
   const description = String(form.get('description') || '').trim() || null
   const active = form.get('active') === 'on'
 
-  if (!name || !slug || !Number.isFinite(priceVnd)) {
+  if (
+    !name ||
+    !slug ||
+    !Number.isFinite(listPriceVnd) ||
+    !Number.isFinite(salePriceVnd) ||
+    !Number.isFinite(stockQty)
+  ) {
     return NextResponse.json({ ok: false, error: 'Invalid input' }, { status: 400 })
   }
 
@@ -32,7 +41,9 @@ export async function POST(req: Request) {
     data: {
       name,
       slug,
-      priceVnd,
+      listPriceVnd,
+      salePriceVnd,
+      stockQty: Math.max(0, Math.trunc(stockQty)),
       categoryId,
       duration,
       warranty,

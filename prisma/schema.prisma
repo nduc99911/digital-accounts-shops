@@ -46,21 +46,24 @@ model Category {
 }
 
 model Product {
-  id          String       @id @default(cuid())
-  name        String
-  slug        String       @unique
-  categoryId  String?
-  category    Category?    @relation(fields: [categoryId], references: [id])
-  shortDesc   String?
-  description String?
-  imageUrl    String?
-  priceVnd    Int
-  duration    String? // e.g. "1 tháng", "6 tháng", "1 năm"
-  warranty    WarrantyType @default(FULL)
-  active      Boolean      @default(true)
-  orderItems  OrderItem[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id            String       @id @default(cuid())
+  name          String
+  slug          String       @unique
+  categoryId    String?
+  category      Category?    @relation(fields: [categoryId], references: [id])
+  shortDesc     String?
+  description   String?
+  imageUrl      String?
+  listPriceVnd  Int
+  salePriceVnd  Int
+  stockQty      Int          @default(0)
+  soldQty       Int          @default(0)
+  duration      String? // e.g. "1 tháng", "6 tháng", "1 năm"
+  warranty      WarrantyType @default(FULL)
+  active        Boolean      @default(true)
+  orderItems    OrderItem[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model CustomerUser {

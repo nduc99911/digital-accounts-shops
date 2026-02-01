@@ -13,7 +13,9 @@ export default async function NewProduct() {
       <form action="/api/admin/products" method="post" className="grid gap-3">
         <input className="rounded-md border px-3 py-2" name="name" placeholder="Tên sản phẩm" required />
         <input className="rounded-md border px-3 py-2" name="slug" placeholder="Slug (vd: chatgpt-plus)" required />
-        <input className="rounded-md border px-3 py-2" name="priceVnd" placeholder="Giá VND (vd: 120000)" required />
+        <input className="rounded-md border px-3 py-2" name="listPriceVnd" placeholder="Giá gốc VND (vd: 120000)" required />
+        <input className="rounded-md border px-3 py-2" name="salePriceVnd" placeholder="Giá sale VND (vd: 99000)" required />
+        <input className="rounded-md border px-3 py-2" name="stockQty" placeholder="Tồn kho (vd: 100)" defaultValue="0" />
 
         <select className="rounded-md border px-3 py-2" name="categoryId" defaultValue="">
           <option value="">-- Chọn danh mục --</option>

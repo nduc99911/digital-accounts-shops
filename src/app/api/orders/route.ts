@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const qty = Math.max(1, Math.min(99, Number(obj.qty || 1)))
     const p = byId.get(pid)
     if (!p) continue
-    orderItems.push({ productId: pid, qty, unitVnd: p.priceVnd })
+    orderItems.push({ productId: pid, qty, unitVnd: p.salePriceVnd })
   }
 
   if (orderItems.length === 0) return NextResponse.json({ error: 'Sản phẩm không hợp lệ' }, { status: 400 })

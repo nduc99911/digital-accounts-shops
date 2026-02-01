@@ -17,7 +17,10 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
       <form action={`/api/admin/products/${p.id}`} method="post" className="grid gap-3">
         <input className="rounded-md border px-3 py-2" name="name" defaultValue={p.name} required />
         <input className="rounded-md border px-3 py-2" name="slug" defaultValue={p.slug} required />
-        <input className="rounded-md border px-3 py-2" name="priceVnd" defaultValue={String(p.priceVnd)} required />
+        <input className="rounded-md border px-3 py-2" name="listPriceVnd" defaultValue={String(p.listPriceVnd)} required />
+        <input className="rounded-md border px-3 py-2" name="salePriceVnd" defaultValue={String(p.salePriceVnd)} required />
+        <input className="rounded-md border px-3 py-2" name="stockQty" defaultValue={String(p.stockQty)} />
+        <input className="rounded-md border px-3 py-2" name="soldQty" defaultValue={String(p.soldQty)} />
         <select className="rounded-md border px-3 py-2" name="categoryId" defaultValue={p.categoryId ?? ''}>
           <option value="">-- Chọn danh mục --</option>
           {categories.map((c) => (

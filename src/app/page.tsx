@@ -167,7 +167,9 @@ export default async function Home() {
                     slug: p.slug,
                     name: p.name,
                     duration: p.duration,
-                    priceVnd: p.priceVnd,
+                    listPriceVnd: p.listPriceVnd,
+                    salePriceVnd: p.salePriceVnd,
+                    soldQty: p.soldQty,
                     imageUrl: p.imageUrl ?? null,
                   }}
                 />
@@ -196,7 +198,9 @@ export default async function Home() {
                         slug: p.slug,
                         name: p.name,
                         duration: p.duration,
-                        priceVnd: p.priceVnd,
+                        listPriceVnd: p.listPriceVnd,
+                        salePriceVnd: p.salePriceVnd,
+                        soldQty: p.soldQty,
                         imageUrl: p.imageUrl ?? null,
                       }}
                     />
