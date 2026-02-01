@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -30,7 +31,11 @@ export default async function AdminOrders() {
           <tbody>
             {orders.map((o) => (
               <tr key={o.id} className="border-t align-top">
-                <td className="p-3 font-medium">{o.code}</td>
+                <td className="p-3 font-medium">
+                  <Link href={`/admin/orders/${o.id}`} className="hover:underline">
+                    {o.code}
+                  </Link>
+                </td>
                 <td className="p-3">
                   <div className="font-medium">{o.customerName}</div>
                   <div className="text-xs text-slate-500">{o.zalo || o.phone || o.email || ''}</div>

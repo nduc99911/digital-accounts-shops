@@ -1,12 +1,11 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import ProductCard from './_ui/ProductCard'
-import { getCurrentCustomer } from '@/lib/customerAuth'
+import SiteHeader from './_ui/SiteHeader'
+import SiteHeader from './_ui/SiteHeader'
 
 export default async function Home() {
   const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
-
-  const customer = await getCurrentCustomer()
 
   const categories = await prisma.category.findMany({
     orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
@@ -31,62 +30,20 @@ export default async function Home() {
 
   return (
     <div id="top" className="min-h-screen bg-slate-100">
-      {/* Top header */}
-      <header className="sticky top-0 z-50 bg-blue-700 text-white shadow">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
-          <Link href="/" className="text-lg font-extrabold tracking-tight">
-            {shopName}
-          </Link>
-
-          <div className="flex-1">
-            <div className="flex overflow-hidden rounded-md bg-white">
-              <input
-                className="w-full px-3 py-2 text-sm text-slate-900 outline-none"
-                placeholder="Tìm kiếm sản phẩm..."
-              />
-              <button className="bg-slate-900 px-4 text-sm font-semibold">Tìm</button>
-            </div>
-          </div>
-
-          <nav className="flex items-center gap-2 text-sm">
-            <Link href="/cart" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-              Giỏ hàng
-            </Link>
-
-            {customer ? (
-              <>
-                <Link href="/account/orders" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-                  Đơn hàng
-                </Link>
-                <form action="/api/auth/logout" method="post">
-                  <button className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">Đăng xuất</button>
-                </form>
-              </>
-            ) : (
-              <Link href="/login" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-                Đăng nhập
-              </Link>
-            )}
-
-            <Link href="/admin" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-              Admin
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Category chips (mobile + desktop) */}
       <div className="border-b bg-white">
         <div className="mx-auto max-w-6xl px-4 py-2">
           <div className="flex gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm">
             {categories.map((c) => (
-              <a
+              <Link
                 key={c.id}
-                href={`#cat-${c.slug}`}
+                href={`/category/${c.slug}`}
                 className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
               >
                 {c.name}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -104,13 +61,13 @@ export default async function Home() {
               ) : (
                 <div className="grid">
                   {categories.map((c) => (
-                    <a
+                    <Link
                       key={c.id}
-                      href={`#cat-${c.slug}`}
+                      href={`/category/${c.slug}`}
                       className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
                     >
                       {c.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -154,7 +111,7 @@ export default async function Home() {
           <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-base font-bold">Sản phẩm nổi bật</h2>
-              <Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">
+              <Link href="/search" className="text-sm font-semibold text-blue-700 hover:underline">
                 Xem tất cả
               </Link>
             </div>
@@ -182,9 +139,14 @@ export default async function Home() {
             <div key={c.id} id={`cat-${c.slug}`} className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-base font-bold">{c.name}</h3>
-                <a href="#top" className="text-sm font-semibold text-blue-700 hover:underline">
-                  Lên đầu
-                </a>
+                <div className="flex items-center gap-3 text-sm font-semibold">
+                  <Link href={`/category/${c.slug}`} className="text-blue-700 hover:underline">
+                    Xem tất cả
+                  </Link>
+                  <a href="#top" className="text-blue-700 hover:underline">
+                    Lên đầu
+                  </a>
+                </div>
               </div>
               {c.products.length === 0 ? (
                 <div className="text-sm text-slate-500">Chưa có sản phẩm trong danh mục này.</div>

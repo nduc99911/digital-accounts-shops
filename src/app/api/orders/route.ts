@@ -14,7 +14,16 @@ export async function POST(req: Request) {
   if (items.length === 0) return NextResponse.json({ error: 'Giỏ hàng trống' }, { status: 400 })
 
   // Re-price from DB to avoid tampering
-  const productIds = [...new Set(items.map((it: unknown) => String((it as { productId?: unknown })?.productId || '')).filter(Boolean))]
+  const productIds = [
+    ...new Set(
+      items
+        .map((it: unknown) => {
+          const obj = it as { productId?: unknown }
+          return String(obj?.productId || '')
+        })
+        .filter((s: string) => Boolean(s)),
+    ),
+  ]
   const products = await prisma.product.findMany({ where: { id: { in: productIds }, active: true } })
   const byId = new Map(products.map((p) => [p.id, p]))
 
@@ -29,6 +38,22 @@ export async function POST(req: Request) {
   }
 
   if (orderItems.length === 0) return NextResponse.json({ error: 'Sản phẩm không hợp lệ' }, { status: 400 })
+
+  // Inventory/stock guard (avoid creating orders that cannot be fulfilled).
+  // Fulfillment uses StockItem allocation, so validate against StockItem too.
+  for (const it of orderItems) {
+    const p = byId.get(it.productId)
+    if (!p) return NextResponse.json({ error: 'Sản phẩm không hợp lệ' }, { status: 400 })
+
+    if (p.stockQty < it.qty) {
+      return NextResponse.json({ error: `Sản phẩm tạm hết hàng: ${p.name}` }, { status: 400 })
+    }
+
+    const availableKeys = await prisma.stockItem.count({ where: { productId: it.productId, usedAt: null } })
+    if (availableKeys < it.qty) {
+      return NextResponse.json({ error: `Sản phẩm tạm hết kho: ${p.name}` }, { status: 400 })
+    }
+  }
 
   const totalVnd = orderItems.reduce((sum, it) => sum + it.unitVnd * it.qty, 0)
 

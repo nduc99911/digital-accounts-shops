@@ -1,8 +1,8 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { formatVnd } from '@/lib/shop'
 import AddToCartButton from './ui'
+import SiteHeader from '@/app/_ui/SiteHeader'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -10,15 +10,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!p || !p.active) notFound()
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
-          <Link href="/" className="text-lg font-bold">{process.env.SHOP_NAME || 'Bùi Lê Digital'}</Link>
-          <Link href="/cart" className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white">Giỏ hàng</Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-slate-100">
+      <SiteHeader />
 
-      <main className="mx-auto max-w-3xl p-4">
+      <main className="mx-auto max-w-4xl p-4">
         <div className="overflow-hidden rounded-xl bg-white shadow-sm">
           <div className="aspect-[16/9] w-full bg-slate-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}

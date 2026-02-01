@@ -13,10 +13,13 @@ export default function ProductCard({
     salePriceVnd: number
     soldQty: number
     imageUrl: string | null
+    stockQty?: number
   }
 }) {
   const img = p.imageUrl || `https://picsum.photos/seed/${p.slug}/600/450`
   const discount = p.listPriceVnd > 0 ? Math.max(0, Math.round((1 - p.salePriceVnd / p.listPriceVnd) * 100)) : 0
+  const outOfStock = typeof p.stockQty === 'number' ? p.stockQty <= 0 : false
+  const bestSeller = p.soldQty >= 50
 
   return (
     <Link
@@ -25,15 +28,25 @@ export default function ProductCard({
     >
       <div className="relative aspect-[4/3] w-full bg-slate-100">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={img} alt={p.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" />
+        <img
+          src={img}
+          alt={p.name}
+          className={`h-full w-full object-cover transition duration-300 group-hover:scale-[1.03] ${outOfStock ? 'opacity-70' : ''}`}
+          loading="lazy"
+        />
 
-        <div className="absolute left-2 top-2 flex gap-1">
-          <span className="rounded bg-blue-600 px-2 py-1 text-[11px] font-semibold text-white">Hot</span>
-          {discount > 0 ? (
-            <span className="rounded bg-rose-600 px-2 py-1 text-[11px] font-semibold text-white">-{discount}%</span>
+        <div className="absolute left-2 top-2 flex flex-wrap gap-1">
+          {outOfStock ? (
+            <span className="rounded-full bg-rose-600/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">Hết hàng</span>
+          ) : bestSeller ? (
+            <span className="rounded-full bg-blue-600/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">Bán chạy</span>
           ) : (
-            <span className="rounded bg-rose-600 px-2 py-1 text-[11px] font-semibold text-white">Sale</span>
+            <span className="rounded-full bg-slate-900/90 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">Hot</span>
           )}
+
+          {discount > 0 ? (
+            <span className="rounded-full bg-amber-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">-{discount}%</span>
+          ) : null}
         </div>
       </div>
 
@@ -42,13 +55,21 @@ export default function ProductCard({
           {p.name}
         </div>
         <div className="mt-1 text-xs text-slate-500">{p.duration || 'Gói'}</div>
-        <div className="mt-3 flex items-end justify-between">
-          <div>
+
+        <div className="mt-3 flex items-end justify-between gap-3">
+          <div className="min-w-0">
             <div className="text-base font-extrabold text-rose-600">{formatVnd(p.salePriceVnd)}</div>
             <div className="text-xs text-slate-500 line-through">{formatVnd(p.listPriceVnd)}</div>
             <div className="mt-1 text-[11px] text-slate-500">Đã bán: {p.soldQty}</div>
           </div>
-          <div className="rounded-md bg-slate-900 px-2 py-1 text-xs font-semibold text-white">Mua ngay</div>
+
+          <div
+            className={`shrink-0 rounded-md px-2 py-1 text-xs font-semibold text-white ${
+              outOfStock ? 'bg-slate-400' : 'bg-slate-900'
+            }`}
+          >
+            {outOfStock ? 'Xem' : 'Mua ngay'}
+          </div>
         </div>
       </div>
     </Link>
