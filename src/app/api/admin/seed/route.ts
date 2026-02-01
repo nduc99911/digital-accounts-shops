@@ -25,12 +25,24 @@ export async function POST(req: Request) {
     })
   }
 
+  const catA = await prisma.category.upsert({
+    where: { slug: 'ai-tools' },
+    update: { name: 'AI Tools', sortOrder: 10 },
+    create: { name: 'AI Tools', slug: 'ai-tools', sortOrder: 10 },
+  })
+  const catB = await prisma.category.upsert({
+    where: { slug: 'streaming' },
+    update: { name: 'Streaming', sortOrder: 20 },
+    create: { name: 'Streaming', slug: 'streaming', sortOrder: 20 },
+  })
+
   const samples = [
     {
       name: 'ChatGPT Plus 1 tháng',
       slug: 'chatgpt-plus-1m',
       priceVnd: 199000,
       duration: '1 tháng',
+      categoryId: catA.id,
       shortDesc: 'Tài khoản dùng ngay • Bảo hành full',
       imageUrl: 'https://picsum.photos/seed/chatgpt/800/600',
       active: true,
@@ -40,6 +52,7 @@ export async function POST(req: Request) {
       slug: 'netflix-premium-1m',
       priceVnd: 89000,
       duration: '1 tháng',
+      categoryId: catB.id,
       shortDesc: 'Profile riêng • 4K',
       imageUrl: 'https://picsum.photos/seed/netflix/800/600',
       active: true,
@@ -49,6 +62,7 @@ export async function POST(req: Request) {
       slug: 'spotify-premium-3m',
       priceVnd: 99000,
       duration: '3 tháng',
+      categoryId: catB.id,
       shortDesc: 'Nghe nhạc không quảng cáo',
       imageUrl: 'https://picsum.photos/seed/spotify/800/600',
       active: true,

@@ -1,62 +1,211 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { formatVnd } from '@/lib/shop'
+import ProductCard from './_ui/ProductCard'
 
 export default async function Home() {
-  const products = await prisma.product.findMany({
+  const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
+
+  const categories = await prisma.category.findMany({
+    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+  })
+
+  const featured = await prisma.product.findMany({
     where: { active: true },
     orderBy: { createdAt: 'desc' },
     take: 12,
   })
 
+  const sections = await prisma.category.findMany({
+    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+    include: {
+      products: {
+        where: { active: true },
+        orderBy: { createdAt: 'desc' },
+        take: 8,
+      },
+    },
+  })
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between p-4">
-          <Link href="/" className="text-lg font-bold">{process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Bùi Lê Digital'}</Link>
-          <div className="flex items-center gap-3">
-            <Link href="/cart" className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white">Giỏ hàng</Link>
-            <Link href="/account/orders" className="text-sm text-slate-600 hover:underline">Tài khoản</Link>
-            <Link href="/admin" className="text-sm text-slate-600 hover:underline">Admin</Link>
+    <div className="min-h-screen bg-slate-100">
+      {/* Top header */}
+      <header className="bg-blue-700 text-white">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+          <Link href="/" className="text-lg font-extrabold tracking-tight">
+            {shopName}
+          </Link>
+
+          <div className="flex-1">
+            <div className="flex overflow-hidden rounded-md bg-white">
+              <input
+                className="w-full px-3 py-2 text-sm text-slate-900 outline-none"
+                placeholder="Tìm kiếm sản phẩm..."
+              />
+              <button className="bg-slate-900 px-4 text-sm font-semibold">Tìm</button>
+            </div>
           </div>
+
+          <nav className="flex items-center gap-3 text-sm">
+            <Link href="/cart" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
+              Giỏ hàng
+            </Link>
+            <Link href="/account/orders" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
+              Tài khoản
+            </Link>
+            <Link href="/admin" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
+              Admin
+            </Link>
+          </nav>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl p-4">
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
-          <div className="text-2xl font-semibold">Tài khoản số dùng ngay</div>
-          <div className="mt-2 text-sm text-white/90">Chuyển khoản QR • Xác nhận nhanh • Hỗ trợ 1-1</div>
-        </div>
+      {/* Main layout */}
+      <main className="mx-auto grid max-w-6xl gap-4 p-4 md:grid-cols-[240px_1fr]">
+        {/* Sidebar */}
+        <aside className="hidden md:block">
+          <div className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+            <div className="bg-slate-50 px-4 py-3 text-sm font-semibold">Danh mục</div>
+            <div className="p-2">
+              {categories.length === 0 ? (
+                <div className="p-3 text-sm text-slate-500">Chưa có danh mục. Vào Admin → Danh mục để tạo.</div>
+              ) : (
+                <div className="grid">
+                  {categories.map((c) => (
+                    <a
+                      key={c.id}
+                      href={`#cat-${c.slug}`}
+                      className="rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {c.name}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
 
-        <h2 className="mb-3 text-lg font-semibold">Sản phẩm nổi bật</h2>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {products.map((p) => (
-            <Link
-              key={p.id}
-              href={`/product/${p.slug}`}
-              className="overflow-hidden rounded-lg bg-white shadow-sm hover:shadow"
-            >
-              <div className="aspect-[4/3] w-full bg-slate-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.imageUrl || 'https://picsum.photos/seed/' + p.slug + '/600/450'}
-                  alt={p.name}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
+        {/* Content */}
+        <section className="grid gap-4">
+          {/* Banner */}
+          <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+            <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-indigo-700 via-blue-700 to-cyan-600 p-6 text-white shadow-sm">
+              <div className="text-2xl font-extrabold">Tài khoản số • Giá tốt • Dùng ngay</div>
+              <div className="mt-2 text-sm text-white/90">
+                Chuyển khoản nhanh • Admin xác nhận thủ công • Bảo hành tuỳ gói
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">Netflix</span>
+                <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">Spotify</span>
+                <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">ChatGPT</span>
+                <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">Canva</span>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                <div className="text-sm font-semibold text-slate-900">Hỗ trợ</div>
+                <div className="mt-1 text-xs text-slate-600">Xác nhận thanh toán & giao hàng nhanh</div>
+                <div className="mt-3 text-xs text-slate-500">(sẽ thêm Zalo/Hotline trong Settings)</div>
+              </div>
+              <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                <div className="text-sm font-semibold text-slate-900">Ưu đãi</div>
+                <div className="mt-1 text-xs text-slate-600">Giảm giá theo combo / mua nhiều</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Featured */}
+          <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-base font-bold">Sản phẩm nổi bật</h2>
+              <Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">
+                Xem tất cả
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+              {featured.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  p={{
+                    id: p.id,
+                    slug: p.slug,
+                    name: p.name,
+                    duration: p.duration,
+                    priceVnd: p.priceVnd,
+                    imageUrl: (p as any).imageUrl ?? null,
+                  }}
                 />
+              ))}
+            </div>
+          </div>
+
+          {/* Sections by category */}
+          {sections.map((c) => (
+            <div key={c.id} id={`cat-${c.slug}`} className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-base font-bold">{c.name}</h3>
+                <a href="#top" className="text-sm font-semibold text-blue-700 hover:underline">
+                  Lên đầu
+                </a>
               </div>
-              <div className="p-4">
-                <div className="font-medium">{p.name}</div>
-                <div className="mt-1 text-xs text-slate-500">{p.duration || 'Gói'}</div>
-                <div className="mt-3 text-blue-600 font-semibold">{formatVnd(p.priceVnd)}</div>
-              </div>
-            </Link>
+              {c.products.length === 0 ? (
+                <div className="text-sm text-slate-500">Chưa có sản phẩm trong danh mục này.</div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+                  {c.products.map((p) => (
+                    <ProductCard
+                      key={p.id}
+                      p={{
+                        id: p.id,
+                        slug: p.slug,
+                        name: p.name,
+                        duration: p.duration,
+                        priceVnd: p.priceVnd,
+                        imageUrl: (p as any).imageUrl ?? null,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
-        </div>
+        </section>
       </main>
 
       <footer className="mt-10 border-t bg-white">
-        <div className="mx-auto max-w-6xl p-4 text-xs text-slate-500">© {new Date().getFullYear()} {process.env.SHOP_NAME || 'Bùi Lê Digital'}</div>
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 md:grid-cols-4">
+          <div>
+            <div className="font-bold">{shopName}</div>
+            <div className="mt-2 text-sm text-slate-600">Shop tài khoản số • Thanh toán chuyển khoản • Xác nhận thủ công</div>
+          </div>
+          <div>
+            <div className="text-sm font-semibold">Hướng dẫn</div>
+            <div className="mt-2 grid gap-1 text-sm text-slate-600">
+              <div>• Cách mua hàng</div>
+              <div>• Cách thanh toán</div>
+              <div>• Nhận hàng</div>
+            </div>
+          </div>
+          <div>
+            <div className="text-sm font-semibold">Chính sách</div>
+            <div className="mt-2 grid gap-1 text-sm text-slate-600">
+              <div>• Bảo hành</div>
+              <div>• Đổi trả</div>
+              <div>• Bảo mật</div>
+            </div>
+          </div>
+          <div>
+            <div className="text-sm font-semibold">Liên hệ</div>
+            <div className="mt-2 grid gap-1 text-sm text-slate-600">
+              <div>• Zalo/Hotline: (sắp có)</div>
+              <div>• Telegram: (sắp có)</div>
+            </div>
+          </div>
+        </div>
+        <div className="border-t">
+          <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-slate-500">© {new Date().getFullYear()} {shopName}</div>
+        </div>
       </footer>
     </div>
   )
