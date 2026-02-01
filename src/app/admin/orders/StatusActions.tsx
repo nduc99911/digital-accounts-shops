@@ -22,7 +22,7 @@ export default function StatusActions({
         body: JSON.stringify({ status: next }),
       })
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(data?.error || 'Update failed')
+      if (!res.ok) throw new Error((data as { error?: string })?.error || 'Update failed')
       // simplest: refresh page
       window.location.reload()
     } catch (e: unknown) {

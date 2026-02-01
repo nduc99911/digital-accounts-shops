@@ -102,6 +102,7 @@ model Order {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   items         OrderItem[]
+  fulfillments  OrderFulfillment[]
 }
 
 model OrderItem {
@@ -113,6 +114,33 @@ model OrderItem {
   qty       Int      @default(1)
   unitVnd   Int
   createdAt DateTime @default(now())
+}
+
+model StockItem {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  value     String
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  fulfillments OrderFulfillment[]
+
+  @@unique([productId, value])
+}
+
+model OrderFulfillment {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Restrict)
+  value       String
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
 }
 
 model PaymentSetting {

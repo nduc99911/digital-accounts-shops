@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -14,6 +15,10 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
   return (
     <div className="rounded-lg bg-white p-5 shadow-sm">
       <h2 className="mb-4 text-lg font-semibold">Sửa sản phẩm</h2>
+      <div className="mb-3 flex items-center justify-between">
+        <div className="text-xs text-slate-500">Quản lý kho auto-giao: </div>
+        <Link className="text-sm text-blue-600 hover:underline" href={`/admin/products/${p.id}/stock`}>Kho sản phẩm</Link>
+      </div>
       <form action={`/api/admin/products/${p.id}`} method="post" className="grid gap-3">
         <input className="rounded-md border px-3 py-2" name="name" defaultValue={p.name} required />
         <input className="rounded-md border px-3 py-2" name="slug" defaultValue={p.slug} required />
