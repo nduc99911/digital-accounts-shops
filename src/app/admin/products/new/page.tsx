@@ -1,8 +1,11 @@
 import { redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
-export default function NewProduct() {
+export default async function NewProduct() {
   if (!isAuthed()) redirect('/admin/login')
+
+  const categories = await prisma.category.findMany({ orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }] })
 
   return (
     <div className="rounded-lg bg-white p-5 shadow-sm">
@@ -11,6 +14,16 @@ export default function NewProduct() {
         <input className="rounded-md border px-3 py-2" name="name" placeholder="Tên sản phẩm" required />
         <input className="rounded-md border px-3 py-2" name="slug" placeholder="Slug (vd: chatgpt-plus)" required />
         <input className="rounded-md border px-3 py-2" name="priceVnd" placeholder="Giá VND (vd: 120000)" required />
+
+        <select className="rounded-md border px-3 py-2" name="categoryId" defaultValue="">
+          <option value="">-- Chọn danh mục --</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
         <input className="rounded-md border px-3 py-2" name="duration" placeholder="Thời hạn (vd: 1 tháng)" />
         <select className="rounded-md border px-3 py-2" name="warranty" defaultValue="FULL">
           <option value="FULL">Full BH</option>

@@ -24,6 +24,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const name = String(form.get('name') || '').trim()
   const slug = String(form.get('slug') || '').trim()
   const priceVnd = Number(String(form.get('priceVnd') || '0').trim())
+  const categoryIdRaw = String(form.get('categoryId') || '').trim()
+  const categoryId = categoryIdRaw || null
   const duration = String(form.get('duration') || '').trim() || null
   const warranty = parseWarranty(String(form.get('warranty') || 'FULL'))
   const imageUrl = String(form.get('imageUrl') || '').trim() || null
@@ -37,6 +39,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       name,
       slug,
       priceVnd,
+      categoryId,
       duration,
       warranty: warranty as any,
       imageUrl,

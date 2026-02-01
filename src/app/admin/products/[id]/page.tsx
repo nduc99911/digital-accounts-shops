@@ -9,6 +9,8 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
   const p = await prisma.product.findUnique({ where: { id } })
   if (!p) notFound()
 
+  const categories = await prisma.category.findMany({ orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }] })
+
   return (
     <div className="rounded-lg bg-white p-5 shadow-sm">
       <h2 className="mb-4 text-lg font-semibold">Sửa sản phẩm</h2>
@@ -16,6 +18,15 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
         <input className="rounded-md border px-3 py-2" name="name" defaultValue={p.name} required />
         <input className="rounded-md border px-3 py-2" name="slug" defaultValue={p.slug} required />
         <input className="rounded-md border px-3 py-2" name="priceVnd" defaultValue={String(p.priceVnd)} required />
+        <select className="rounded-md border px-3 py-2" name="categoryId" defaultValue={(p as any).categoryId ?? ''}>
+          <option value="">-- Chọn danh mục --</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
         <input className="rounded-md border px-3 py-2" name="duration" defaultValue={p.duration ?? ''} />
         <select className="rounded-md border px-3 py-2" name="warranty" defaultValue={p.warranty}>
           <option value="FULL">Full BH</option>
