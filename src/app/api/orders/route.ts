@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { makeOrderCode } from '@/lib/shop'
+import { getCurrentCustomer } from '@/lib/customerAuth'
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null)
@@ -38,9 +39,12 @@ export async function POST(req: Request) {
     code = makeOrderCode()
   }
 
+  const user = await getCurrentCustomer()
+
   const order = await prisma.order.create({
     data: {
       code,
+      userId: user?.id ?? null,
       customerName,
       phone: body.phone ? String(body.phone).trim() : null,
       zalo: body.zalo ? String(body.zalo).trim() : null,

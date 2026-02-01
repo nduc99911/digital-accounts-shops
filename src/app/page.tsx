@@ -16,6 +16,7 @@ export default async function Home() {
           <Link href="/" className="text-lg font-bold">{process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Bùi Lê Digital'}</Link>
           <div className="flex items-center gap-3">
             <Link href="/cart" className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white">Giỏ hàng</Link>
+            <Link href="/account/orders" className="text-sm text-slate-600 hover:underline">Tài khoản</Link>
             <Link href="/admin" className="text-sm text-slate-600 hover:underline">Admin</Link>
           </div>
         </div>
