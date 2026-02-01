@@ -1,7 +1,10 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  turbopack: {
+    // Avoid workspace-root confusion when the monorepo has multiple lockfiles.
+    root: __dirname,
+  },
+}
 
-export default nextConfig;
+export default nextConfig

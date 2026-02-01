@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   // Re-price from DB to avoid tampering
   const rawIds: string[] = items
     .map((it: unknown) => String((it as { productId?: unknown })?.productId || ''))
-    .filter((s): s is string => Boolean(s))
+    .filter((s: string): s is string => Boolean(s))
 
   const productIds: string[] = Array.from(new Set(rawIds))
   const products = await prisma.product.findMany({ where: { id: { in: productIds }, active: true } })
