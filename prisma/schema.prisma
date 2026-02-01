@@ -111,3 +111,15 @@ model OrderItem {
   unitVnd   Int
   createdAt DateTime @default(now())
 }
+
+model PaymentSetting {
+  id            String   @id @default(cuid())
+  bankName      String
+  accountNumber String
+  accountName   String
+  note          String?
+  qrImageUrl    String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

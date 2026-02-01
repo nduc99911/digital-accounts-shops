@@ -18,6 +18,9 @@ export default function AdminHome() {
           <Link className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white" href="/admin/categories">
             Danh mục
           </Link>
+          <Link className="rounded-md bg-amber-600 px-3 py-2 text-sm font-medium text-white" href="/admin/settings/payment">
+            Thanh toán
+          </Link>
           <Link className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white" href="/admin/orders">
             Đơn hàng
           </Link>

@@ -17,8 +17,25 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState('')
   const [note, setNote] = useState('')
 
+  const [payment, setPayment] = useState<
+    | {
+        active: true
+        bankName: string
+        accountNumber: string
+        accountName: string
+        note?: string | null
+        qrImageUrl?: string | null
+      }
+    | { active: false }
+    | null
+  >(null)
+
   useEffect(() => {
     setItems(readCart())
+    fetch('/api/settings/payment')
+      .then((r) => r.json())
+      .then((d) => setPayment(d))
+      .catch(() => setPayment({ active: false }))
   }, [])
 
   const total = useMemo(() => cartTotal(items), [items])
@@ -145,22 +162,59 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <div className="mb-3 font-semibold">Tóm tắt</div>
-              <div className="grid gap-2 text-sm">
-                {items.map((it) => (
-                  <div key={it.productId} className="flex items-center justify-between">
-                    <div className="text-slate-700">
-                      {it.name} <span className="text-xs text-slate-500">x{it.qty}</span>
+            <div className="grid gap-4">
+              <div className="rounded-lg bg-white p-4 shadow-sm">
+                <div className="mb-3 font-semibold">Tóm tắt</div>
+                <div className="grid gap-2 text-sm">
+                  {items.map((it) => (
+                    <div key={it.productId} className="flex items-center justify-between">
+                      <div className="text-slate-700">
+                        {it.name} <span className="text-xs text-slate-500">x{it.qty}</span>
+                      </div>
+                      <div className="font-medium">{formatVnd(it.priceVnd * it.qty)}</div>
                     </div>
-                    <div className="font-medium">{formatVnd(it.priceVnd * it.qty)}</div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between border-t pt-3">
+                  <div className="text-sm text-slate-600">Tổng</div>
+                  <div className="text-lg font-semibold">{formatVnd(total)}</div>
+                </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between border-t pt-3">
-                <div className="text-sm text-slate-600">Tổng</div>
-                <div className="text-lg font-semibold">{formatVnd(total)}</div>
+              <div className="rounded-lg bg-white p-4 shadow-sm">
+                <div className="mb-3 font-semibold">Thanh toán chuyển khoản</div>
+
+                {payment === null ? (
+                  <div className="text-sm text-slate-500">Đang tải thông tin thanh toán...</div>
+                ) : payment.active === false ? (
+                  <div className="text-sm text-amber-700">
+                    Chưa cấu hình thanh toán. Vui lòng liên hệ shop hoặc quay lại sau.
+                  </div>
+                ) : (
+                  <div className="grid gap-3">
+                    {payment.qrImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={payment.qrImageUrl} alt="QR" className="w-full max-w-[320px] rounded-md border" />
+                    ) : (
+                      <div className="rounded-md border bg-slate-50 p-3 text-sm text-slate-600">
+                        (Chưa có ảnh QR — admin có thể thêm link QR trong Admin → Thanh toán)
+                      </div>
+                    )}
+
+                    <div className="text-sm">
+                      <div><span className="text-slate-500">Ngân hàng:</span> <span className="font-medium">{payment.bankName}</span></div>
+                      <div><span className="text-slate-500">Số tài khoản:</span> <span className="font-medium">{payment.accountNumber}</span></div>
+                      <div><span className="text-slate-500">Chủ tài khoản:</span> <span className="font-medium">{payment.accountName}</span></div>
+                    </div>
+
+                    {payment.note ? <div className="text-xs text-slate-500">Ghi chú: {payment.note}</div> : null}
+
+                    <div className="text-xs text-slate-500">
+                      Sau khi chuyển khoản, đơn sẽ ở trạng thái <b>Chờ thanh toán</b>. Admin sẽ kiểm tra và chuyển sang <b>Thành công</b>.
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
