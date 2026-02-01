@@ -17,6 +17,7 @@ export async function POST(req: Request) {
   const priceVnd = Number(String(form.get('priceVnd') || '0').trim())
   const duration = String(form.get('duration') || '').trim() || null
   const warranty = parseWarranty(String(form.get('warranty') || 'FULL'))
+  const imageUrl = String(form.get('imageUrl') || '').trim() || null
   const shortDesc = String(form.get('shortDesc') || '').trim() || null
   const description = String(form.get('description') || '').trim() || null
   const active = form.get('active') === 'on'
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
       priceVnd,
       duration,
       warranty: warranty as any,
+      imageUrl,
       shortDesc,
       description,
       active,

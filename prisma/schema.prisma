@@ -53,6 +53,7 @@ model Product {
   category    Category?    @relation(fields: [categoryId], references: [id])
   shortDesc   String?
   description String?
+  imageUrl    String?
   priceVnd    Int
   duration    String? // e.g. "1 tháng", "6 tháng", "1 năm"
   warranty    WarrantyType @default(FULL)

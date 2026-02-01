@@ -22,6 +22,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
           <option value="LIMITED">BH giới hạn</option>
           <option value="NONE">Không BH</option>
         </select>
+        <input className="rounded-md border px-3 py-2" name="imageUrl" defaultValue={(p as any).imageUrl ?? ''} placeholder="Link ảnh (tạm)" />
         <textarea className="rounded-md border px-3 py-2" name="shortDesc" defaultValue={p.shortDesc ?? ''} rows={2} />
         <textarea className="rounded-md border px-3 py-2" name="description" defaultValue={p.description ?? ''} rows={5} />
         <label className="flex items-center gap-2 text-sm">

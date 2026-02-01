@@ -17,6 +17,7 @@ export default function NewProduct() {
           <option value="LIMITED">BH giới hạn</option>
           <option value="NONE">Không BH</option>
         </select>
+        <input className="rounded-md border px-3 py-2" name="imageUrl" placeholder="Link ảnh (tạm)" />
         <textarea className="rounded-md border px-3 py-2" name="shortDesc" placeholder="Mô tả ngắn" rows={2} />
         <textarea className="rounded-md border px-3 py-2" name="description" placeholder="Mô tả chi tiết" rows={5} />
         <label className="flex items-center gap-2 text-sm">

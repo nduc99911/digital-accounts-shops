@@ -33,11 +33,22 @@ export default async function Home() {
             <Link
               key={p.id}
               href={`/product/${p.slug}`}
-              className="rounded-lg bg-white p-4 shadow-sm hover:shadow"
+              className="overflow-hidden rounded-lg bg-white shadow-sm hover:shadow"
             >
-              <div className="font-medium">{p.name}</div>
-              <div className="mt-1 text-xs text-slate-500">{p.duration || 'Gói'}</div>
-              <div className="mt-3 text-blue-600 font-semibold">{formatVnd(p.priceVnd)}</div>
+              <div className="aspect-[4/3] w-full bg-slate-100">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.imageUrl || 'https://picsum.photos/seed/' + p.slug + '/600/450'}
+                  alt={p.name}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <div className="p-4">
+                <div className="font-medium">{p.name}</div>
+                <div className="mt-1 text-xs text-slate-500">{p.duration || 'Gói'}</div>
+                <div className="mt-3 text-blue-600 font-semibold">{formatVnd(p.priceVnd)}</div>
+              </div>
             </Link>
           ))}
         </div>

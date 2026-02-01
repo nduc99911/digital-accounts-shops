@@ -19,9 +19,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       </header>
 
       <main className="mx-auto max-w-3xl p-4">
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold">{p.name}</h1>
-          <div className="mt-2 text-sm text-slate-600">{p.shortDesc || ''}</div>
+        <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+          <div className="aspect-[16/9] w-full bg-slate-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={p.imageUrl || 'https://picsum.photos/seed/' + p.slug + '/1200/675'}
+              alt={p.name}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="p-6">
+            <h1 className="text-2xl font-semibold">{p.name}</h1>
+            <div className="mt-2 text-sm text-slate-600">{p.shortDesc || ''}</div>
 
           <div className="mt-4 grid gap-2 text-sm">
             <div><span className="text-slate-500">Thời hạn:</span> {p.duration || '—'}</div>
@@ -33,11 +44,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <AddToCartButton productId={p.id} name={p.name} priceVnd={p.priceVnd} />
           </div>
 
-          {p.description && (
-            <div className="prose prose-slate mt-6 max-w-none whitespace-pre-wrap">
-              {p.description}
-            </div>
-          )}
+            {p.description && (
+              <div className="prose prose-slate mt-6 max-w-none whitespace-pre-wrap">
+                {p.description}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>
