@@ -14,6 +14,11 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash)
 }
 
+// Next.js 16+ dynamic APIs: cookies() is async
+async function cookieStore() {
+  return cookies()
+}
+
 export async function createSession(userId: string) {
   const token = crypto.randomBytes(24).toString('hex')
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
@@ -26,7 +31,8 @@ export async function createSession(userId: string) {
     },
   })
 
-  cookies().set(COOKIE_NAME, token, {
+  const c = await cookieStore()
+  c.set(COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -36,11 +42,12 @@ export async function createSession(userId: string) {
 }
 
 export async function clearSession() {
-  const token = cookies().get(COOKIE_NAME)?.value
+  const c = await cookieStore()
+  const token = c.get(COOKIE_NAME)?.value
   if (token) {
     await prisma.customerSession.deleteMany({ where: { token } }).catch(() => {})
   }
-  cookies().set(COOKIE_NAME, '', {
+  c.set(COOKIE_NAME, '', {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -50,7 +57,8 @@ export async function clearSession() {
 }
 
 export async function getCurrentCustomer() {
-  const token = cookies().get(COOKIE_NAME)?.value
+  const c = await cookieStore()
+  const token = c.get(COOKIE_NAME)?.value
   if (!token) return null
 
   const session = await prisma.customerSession.findUnique({
