@@ -25,8 +25,9 @@ export default function StatusActions({
       if (!res.ok) throw new Error(data?.error || 'Update failed')
       // simplest: refresh page
       window.location.reload()
-    } catch (e: any) {
-      setErr(e?.message || 'Có lỗi')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Có lỗi'
+      setErr(msg)
       setLoading(false)
     }
   }

@@ -168,7 +168,7 @@ export default async function Home() {
                     name: p.name,
                     duration: p.duration,
                     priceVnd: p.priceVnd,
-                    imageUrl: (p as any).imageUrl ?? null,
+                    imageUrl: p.imageUrl ?? null,
                   }}
                 />
               ))}
@@ -197,7 +197,7 @@ export default async function Home() {
                         name: p.name,
                         duration: p.duration,
                         priceVnd: p.priceVnd,
-                        imageUrl: (p as any).imageUrl ?? null,
+                        imageUrl: p.imageUrl ?? null,
                       }}
                     />
                   ))}

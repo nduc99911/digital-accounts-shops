@@ -18,7 +18,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
         <input className="rounded-md border px-3 py-2" name="name" defaultValue={p.name} required />
         <input className="rounded-md border px-3 py-2" name="slug" defaultValue={p.slug} required />
         <input className="rounded-md border px-3 py-2" name="priceVnd" defaultValue={String(p.priceVnd)} required />
-        <select className="rounded-md border px-3 py-2" name="categoryId" defaultValue={(p as any).categoryId ?? ''}>
+        <select className="rounded-md border px-3 py-2" name="categoryId" defaultValue={p.categoryId ?? ''}>
           <option value="">-- Chọn danh mục --</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
@@ -33,7 +33,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
           <option value="LIMITED">BH giới hạn</option>
           <option value="NONE">Không BH</option>
         </select>
-        <input className="rounded-md border px-3 py-2" name="imageUrl" defaultValue={(p as any).imageUrl ?? ''} placeholder="Link ảnh (tạm)" />
+        <input className="rounded-md border px-3 py-2" name="imageUrl" defaultValue={p.imageUrl ?? ''} placeholder="Link ảnh (tạm)" />
         <textarea className="rounded-md border px-3 py-2" name="shortDesc" defaultValue={p.shortDesc ?? ''} rows={2} />
         <textarea className="rounded-md border px-3 py-2" name="description" defaultValue={p.description ?? ''} rows={5} />
         <label className="flex items-center gap-2 text-sm">

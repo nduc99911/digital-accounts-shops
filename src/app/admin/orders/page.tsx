@@ -45,7 +45,7 @@ export default async function AdminOrders() {
                 </td>
                 <td className="p-3">{o.totalVnd.toLocaleString('vi-VN')}</td>
                 <td className="p-3">
-                  <StatusActions id={o.id} status={o.status as any} />
+                  <StatusActions id={o.id} status={o.status} />
                 </td>
                 <td className="p-3">{new Date(o.createdAt).toLocaleString('vi-VN')}</td>
               </tr>

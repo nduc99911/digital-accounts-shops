@@ -80,7 +80,7 @@ export async function POST(req: Request) {
         imageUrl: p.imageUrl,
         active: p.active,
       },
-      create: p as any,
+      create: p,
     })
   }
 

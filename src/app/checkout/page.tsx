@@ -65,8 +65,9 @@ export default function CheckoutPage() {
 
       setOrder({ code: data.code })
       clearCart()
-    } catch (e: any) {
-      setError(e?.message || 'Có lỗi xảy ra')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Có lỗi xảy ra'
+      setError(msg)
     } finally {
       setLoading(false)
     }

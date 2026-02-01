@@ -1,16 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { cartTotal, readCart, writeCart, type CartItem } from '@/lib/cart'
 import { formatVnd } from '@/lib/shop'
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>([])
-
-  useEffect(() => {
-    setItems(readCart())
-  }, [])
+  const [items, setItems] = useState<CartItem[]>(() => readCart())
 
   const total = useMemo(() => cartTotal(items), [items])
 

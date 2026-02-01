@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const categoryIdRaw = String(form.get('categoryId') || '').trim()
   const categoryId = categoryIdRaw || null
   const duration = String(form.get('duration') || '').trim() || null
-  const warranty = parseWarranty(String(form.get('warranty') || 'FULL'))
+  const warranty = parseWarranty(String(form.get('warranty') || 'FULL')) as 'FULL' | 'LIMITED' | 'NONE'
   const imageUrl = String(form.get('imageUrl') || '').trim() || null
   const shortDesc = String(form.get('shortDesc') || '').trim() || null
   const description = String(form.get('description') || '').trim() || null
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       priceVnd,
       categoryId,
       duration,
-      warranty: warranty as any,
+      warranty,
       imageUrl,
       shortDesc,
       description,

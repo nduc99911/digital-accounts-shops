@@ -14,14 +14,15 @@ export async function POST(req: Request) {
   if (items.length === 0) return NextResponse.json({ error: 'Giỏ hàng trống' }, { status: 400 })
 
   // Re-price from DB to avoid tampering
-  const productIds = [...new Set(items.map((it: any) => String(it.productId || '')).filter(Boolean))]
+  const productIds = [...new Set(items.map((it: unknown) => String((it as { productId?: unknown })?.productId || '')).filter(Boolean))]
   const products = await prisma.product.findMany({ where: { id: { in: productIds }, active: true } })
   const byId = new Map(products.map((p) => [p.id, p]))
 
   const orderItems: { productId: string; qty: number; unitVnd: number }[] = []
-  for (const it of items) {
-    const pid = String(it.productId || '')
-    const qty = Math.max(1, Math.min(99, Number(it.qty || 1)))
+  for (const it of items as unknown[]) {
+    const obj = it as { productId?: unknown; qty?: unknown }
+    const pid = String(obj.productId || '')
+    const qty = Math.max(1, Math.min(99, Number(obj.qty || 1)))
     const p = byId.get(pid)
     if (!p) continue
     orderItems.push({ productId: pid, qty, unitVnd: p.priceVnd })
