@@ -28,22 +28,21 @@ export default async function Home() {
     },
   })
 
-  // Flash sale products: significant discounts, sorted by discount %
+  // Flash sale products: products with discount >= 20%
   const flashProducts = await prisma.product.findMany({
     where: {
       active: true,
       stockQty: { gt: 0 },
       listPriceVnd: { gt: 0 },
-      salePriceVnd: { lt: prisma.$queryRaw`"listPriceVnd" * 0.8` },
     },
     orderBy: [{ soldQty: 'desc' }, { createdAt: 'desc' }],
-    take: 8,
+    take: 20,
   })
 
   // Filter products with actual discount >= 20%
   const discountedFlashProducts = flashProducts.filter(
     (p) => p.listPriceVnd > 0 && (1 - p.salePriceVnd / p.listPriceVnd) >= 0.2
-  )
+  ).slice(0, 8)
 
   // Flash sale ends at midnight
   const flashSaleEnd = new Date()
