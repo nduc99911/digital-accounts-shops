@@ -112,9 +112,21 @@ export default function SearchAutocomplete({
   }
 
   return (
-    <div ref={containerRef} className="relative flex-1">
+    <div ref={containerRef} className="relative flex-1 max-w-xl">
       <form onSubmit={handleSubmit} className="flex w-full">
-        <div className="flex w-full overflow-hidden rounded-md bg-white ring-1 ring-black/5 dark:bg-slate-900 dark:ring-white/10">
+        <div 
+          className="flex w-full overflow-hidden rounded-2xl transition-all duration-300 focus-within:ring-2 focus-within:ring-violet-500/30 focus-within:shadow-lg"
+          style={{
+            background: 'rgba(255, 255, 255, 0.9)',
+            border: '1px solid rgba(139, 92, 246, 0.15)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+          }}
+        >
+          <div className="flex items-center pl-4 text-slate-400">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
           <input
             ref={inputRef}
             name="q"
@@ -126,13 +138,13 @@ export default function SearchAutocomplete({
             }}
             onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
-            className="w-full px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:bg-transparent dark:text-slate-100 dark:placeholder:text-slate-500"
-            placeholder="Tìm kiếm sản phẩm…"
+            className="w-full bg-transparent px-3 py-3 text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-200"
+            placeholder="Tìm kiếm sản phẩm..."
             autoComplete="off"
           />
           <button
             type="submit"
-            className="bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
+            className="bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-bold text-white transition-all hover:from-violet-700 hover:to-fuchsia-700"
           >
             Tìm
           </button>
@@ -141,13 +153,20 @@ export default function SearchAutocomplete({
 
       {/* Autocomplete dropdown */}
       {isOpen && query.length >= 2 && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-white/10">
+        <div 
+          className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl shadow-2xl"
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            border: '1px solid rgba(255, 255, 255, 0.5)',
+          }}
+        >
           {isLoading ? (
-            <div className="flex items-center justify-center p-4">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
+            <div className="flex items-center justify-center p-6">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-violet-300 border-t-violet-600" />
             </div>
           ) : suggestions.length > 0 ? (
-            <div className="max-h-[400px] overflow-auto">
+            <div className="max-h-[420px] overflow-auto">
               {suggestions.map((s, index) => {
                 const discount =
                   s.listPriceVnd > 0
@@ -160,14 +179,14 @@ export default function SearchAutocomplete({
                     key={s.id}
                     onClick={() => handleSuggestionClick(s.slug)}
                     onMouseEnter={() => setHighlightedIndex(index)}
-                    className={`flex w-full items-center gap-3 p-3 text-left transition-colors ${
+                    className={`flex w-full items-center gap-4 p-4 text-left transition-all duration-200 ${
                       isHighlighted
-                        ? 'bg-blue-50 dark:bg-blue-500/10'
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-800'
+                        ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50'
+                        : 'hover:bg-slate-50'
                     }`}
                   >
                     {/* Thumbnail */}
-                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
+                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-slate-100 to-slate-200">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={s.imageUrl || `https://picsum.photos/seed/${s.slug}/100/100`}
@@ -178,27 +197,30 @@ export default function SearchAutocomplete({
 
                     {/* Info */}
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+                      <div className="truncate text-sm font-bold text-slate-800">
                         {s.name}
                       </div>
-                      <div className="mt-0.5 flex items-center gap-2">
-                        <span className="text-sm font-semibold text-rose-600 dark:text-rose-400">
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-pink-600">
                           {formatVnd(s.salePriceVnd)}
                         </span>
                         {discount > 0 && (
-                          <span className="rounded bg-rose-100 px-1 py-0.5 text-[10px] font-bold text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
+                          <span className="rounded-lg bg-gradient-to-r from-rose-500 to-pink-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
                             -{discount}%
                           </span>
                         )}
                       </div>
-                      <div className="text-[10px] text-slate-400">
-                        Đã bán {s.soldQty}
+                      <div className="mt-0.5 flex items-center gap-1 text-[11px] font-medium text-slate-500">
+                        <svg className="h-3 w-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        Đã bán {s.soldQty.toLocaleString()}
                       </div>
                     </div>
 
                     {/* Arrow */}
                     <svg
-                      className="h-4 w-4 shrink-0 text-slate-400"
+                      className="h-5 w-5 shrink-0 text-slate-300"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -213,7 +235,7 @@ export default function SearchAutocomplete({
               <Link
                 href={`/search?q=${encodeURIComponent(query)}`}
                 onClick={() => setIsOpen(false)}
-                className="flex w-full items-center justify-center gap-1 border-t border-slate-100 bg-slate-50 p-2 text-sm font-medium text-blue-600 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-blue-400 dark:hover:bg-slate-800"
+                className="flex w-full items-center justify-center gap-2 border-t border-slate-100 bg-gradient-to-r from-violet-50/50 to-fuchsia-50/50 p-4 text-sm font-bold text-violet-600 transition-all hover:from-violet-100 hover:to-fuchsia-100"
               >
                 Xem tất cả kết quả cho &quot;{query}&quot;
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,8 +244,18 @@ export default function SearchAutocomplete({
               </Link>
             </div>
           ) : (
-            <div className="p-4 text-center text-sm text-slate-500 dark:text-slate-400">
-              Không tìm thấy sản phẩm nào
+            <div className="p-6 text-center">
+              <div className="mb-2 flex justify-center">
+                <svg className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <div className="text-sm font-medium text-slate-500">
+                Không tìm thấy sản phẩm nào
+              </div>
+              <div className="mt-1 text-xs text-slate-400">
+                Thử tìm kiếm với từ khóa khác
+              </div>
             </div>
           )}
         </div>
