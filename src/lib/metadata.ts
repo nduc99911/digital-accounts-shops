@@ -80,7 +80,7 @@ export function generateProductMetadata({
       description: description.slice(0, 160),
       url,
       siteName,
-      type: 'product',
+      type: 'article',
       locale: 'vi_VN',
       images: imageUrl
         ? [
@@ -108,8 +108,8 @@ export function generateProductMetadata({
     },
     other: price
       ? {
-          'product:price:amount': String(price),
-          'product:price:currency': 'VND',
+          'og:price:amount': String(price),
+          'og:price:currency': 'VND',
         }
       : undefined,
   }
