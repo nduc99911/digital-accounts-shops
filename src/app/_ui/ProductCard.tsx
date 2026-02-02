@@ -24,9 +24,9 @@ export default function ProductCard({
   return (
     <Link
       href={`/product/${p.slug}`}
-      className="group overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-[1px] hover:shadow-md"
+      className="group overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-[1px] hover:shadow-md dark:bg-slate-950 dark:ring-white/10 dark:hover:shadow-lg dark:hover:shadow-black/30"
     >
-      <div className="relative aspect-[4/3] w-full bg-slate-100">
+      <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-slate-900">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={img}
@@ -37,35 +37,37 @@ export default function ProductCard({
 
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           {outOfStock ? (
-            <span className="rounded-full bg-rose-600/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">Hết hàng</span>
+            <span className="rounded-full bg-rose-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm shadow-black/20">Hết hàng</span>
           ) : bestSeller ? (
-            <span className="rounded-full bg-blue-600/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">Bán chạy</span>
+            <span className="rounded-full bg-blue-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm shadow-black/20">Bán chạy</span>
           ) : (
-            <span className="rounded-full bg-slate-900/90 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">Hot</span>
+            <span className="rounded-full bg-slate-950/90 px-2 py-1 text-[11px] font-semibold text-white ring-1 ring-white/10 shadow-sm shadow-black/20">Hot</span>
           )}
 
           {discount > 0 ? (
-            <span className="rounded-full bg-amber-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">-{discount}%</span>
+            <span className="rounded-full bg-amber-400/95 px-2 py-1 text-[11px] font-semibold text-slate-950 shadow-sm shadow-black/20">-{discount}%</span>
           ) : null}
         </div>
       </div>
 
       <div className="p-3">
-        <div className="line-clamp-2 min-h-[40px] text-sm font-semibold text-slate-900 group-hover:text-blue-700">
+        <div className="line-clamp-2 min-h-[40px] text-sm font-semibold text-slate-900 group-hover:text-blue-700 dark:text-slate-100 dark:group-hover:text-blue-300">
           {p.name}
         </div>
-        <div className="mt-1 text-xs text-slate-500">{p.duration || 'Gói'}</div>
+        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{p.duration || 'Gói'}</div>
 
         <div className="mt-3 flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <div className="text-base font-extrabold text-rose-600">{formatVnd(p.salePriceVnd)}</div>
-            <div className="text-xs text-slate-500 line-through">{formatVnd(p.listPriceVnd)}</div>
-            <div className="mt-1 text-[11px] text-slate-500">Đã bán: {p.soldQty}</div>
+            <div className="text-base font-extrabold text-rose-600 dark:text-rose-400">{formatVnd(p.salePriceVnd)}</div>
+            <div className="text-xs text-slate-500 line-through dark:text-slate-500">{formatVnd(p.listPriceVnd)}</div>
+            <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Đã bán: {p.soldQty}</div>
           </div>
 
           <div
-            className={`shrink-0 rounded-md px-2 py-1 text-xs font-semibold text-white ${
-              outOfStock ? 'bg-slate-400' : 'bg-slate-900'
+            className={`shrink-0 rounded-md px-2 py-1 text-xs font-semibold ring-1 ring-slate-200 dark:ring-white/10 ${
+              outOfStock
+                ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100'
+                : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500'
             }`}
           >
             {outOfStock ? 'Xem' : 'Mua ngay'}

@@ -46,12 +46,14 @@ export default function Pagination({
   for (let i = start; i <= end; i++) pages.push(i)
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+    <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
       <Link
         href={toParams({ page: page > 1 ? String(page - 1) : undefined })}
         aria-disabled={page <= 1}
-        className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-slate-200 ${
-          page <= 1 ? 'pointer-events-none bg-slate-50 text-slate-400' : 'bg-white text-slate-900 hover:bg-slate-50'
+        className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 transition ${
+          page <= 1
+            ? 'pointer-events-none bg-slate-50 text-slate-400 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-500 dark:ring-white/10'
+            : 'bg-white text-slate-900 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:hover:bg-slate-800'
         }`}
       >
         Trước
@@ -61,7 +63,7 @@ export default function Pagination({
         <>
           <Link
             href={toParams({ page: '1' })}
-            className="rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-slate-200 hover:bg-slate-50"
+            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:hover:bg-slate-800"
           >
             1
           </Link>
@@ -73,8 +75,10 @@ export default function Pagination({
         <Link
           key={p}
           href={toParams({ page: String(p) })}
-          className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-slate-200 ${
-            p === page ? 'bg-slate-900 text-white ring-slate-900' : 'bg-white text-slate-900 hover:bg-slate-50'
+          className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 transition ${
+            p === page
+              ? 'bg-slate-900 text-white ring-slate-900 dark:bg-blue-600 dark:ring-blue-500/60'
+              : 'bg-white text-slate-900 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:hover:bg-slate-800'
           }`}
         >
           {p}
@@ -86,7 +90,7 @@ export default function Pagination({
           <span className="px-1 text-sm text-slate-500">…</span>
           <Link
             href={toParams({ page: String(totalPages) })}
-            className="rounded-md bg-white px-3 py-2 text-sm font-semibold ring-1 ring-slate-200 hover:bg-slate-50"
+            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:hover:bg-slate-800"
           >
             {totalPages}
           </Link>
@@ -96,8 +100,10 @@ export default function Pagination({
       <Link
         href={toParams({ page: page < totalPages ? String(page + 1) : undefined })}
         aria-disabled={page >= totalPages}
-        className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 ring-slate-200 ${
-          page >= totalPages ? 'pointer-events-none bg-slate-50 text-slate-400' : 'bg-white text-slate-900 hover:bg-slate-50'
+        className={`rounded-md px-3 py-2 text-sm font-semibold ring-1 transition ${
+          page >= totalPages
+            ? 'pointer-events-none bg-slate-50 text-slate-400 ring-slate-200 dark:bg-slate-900/60 dark:text-slate-500 dark:ring-white/10'
+            : 'bg-white text-slate-900 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:hover:bg-slate-800'
         }`}
       >
         Sau
