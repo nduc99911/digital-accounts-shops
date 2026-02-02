@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import ProductCard from './_ui/ProductCard'
 import SiteHeader from './_ui/SiteHeader'
+import FlashSale from './_ui/FlashSale'
 
 export default async function Home() {
   const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
@@ -26,6 +27,27 @@ export default async function Home() {
       },
     },
   })
+
+  // Flash sale products: significant discounts, sorted by discount %
+  const flashProducts = await prisma.product.findMany({
+    where: {
+      active: true,
+      stockQty: { gt: 0 },
+      listPriceVnd: { gt: 0 },
+      salePriceVnd: { lt: prisma.$queryRaw`"listPriceVnd" * 0.8` },
+    },
+    orderBy: [{ soldQty: 'desc' }, { createdAt: 'desc' }],
+    take: 8,
+  })
+
+  // Filter products with actual discount >= 20%
+  const discountedFlashProducts = flashProducts.filter(
+    (p) => p.listPriceVnd > 0 && (1 - p.salePriceVnd / p.listPriceVnd) >= 0.2
+  )
+
+  // Flash sale ends at midnight
+  const flashSaleEnd = new Date()
+  flashSaleEnd.setHours(23, 59, 59, 999)
 
   return (
     <div id="top" className="min-h-screen bg-slate-100 dark:bg-slate-950">
@@ -110,6 +132,24 @@ export default async function Home() {
               </div>
             </div>
           </div>
+
+          {/* Flash Sale */}
+          {discountedFlashProducts.length > 0 && (
+            <FlashSale
+              products={discountedFlashProducts.map((p) => ({
+                id: p.id,
+                slug: p.slug,
+                name: p.name,
+                duration: p.duration,
+                listPriceVnd: p.listPriceVnd,
+                salePriceVnd: p.salePriceVnd,
+                soldQty: p.soldQty,
+                imageUrl: p.imageUrl ?? null,
+                stockQty: p.stockQty,
+              }))}
+              endDate={flashSaleEnd}
+            />
+          )}
 
           {/* Featured */}
           <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
