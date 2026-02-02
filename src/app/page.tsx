@@ -91,6 +91,11 @@ export default async function Home() {
                 <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">ChatGPT</span>
                 <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">Canva</span>
               </div>
+              {/* Promo badges */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="rounded-md bg-amber-400/90 px-2 py-1 text-xs font-bold text-slate-900">🔥 Giảm đến 70%</span>
+                <span className="rounded-md bg-emerald-400/90 px-2 py-1 text-xs font-bold text-slate-900">⚡ Giao tự động</span>
+              </div>
             </div>
 
             <div className="grid gap-3">

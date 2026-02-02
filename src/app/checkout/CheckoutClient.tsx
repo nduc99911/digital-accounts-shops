@@ -5,6 +5,37 @@ import Link from 'next/link'
 import { cartTotal, clearCart, readCart, type CartItem } from '@/lib/cart'
 import { formatVnd } from '@/lib/shop'
 
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+  
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Fallback for browsers that don't support clipboard API
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="ml-2 inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+    >
+      {copied ? '✓ Đã copy' : label}
+    </button>
+  )
+}
+
 export default function CheckoutClient() {
   const [items, setItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
@@ -218,18 +249,26 @@ export default function CheckoutClient() {
                     </div>
                   )}
 
-                  <div className="text-sm">
-                    <div>
-                      <span className="text-slate-500 dark:text-slate-400">Ngân hàng:</span>{' '}
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{payment.bankName}</span>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center">
+                      <span className="text-slate-500 dark:text-slate-400">Ngân hàng:</span>
+                      <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">{payment.bankName}</span>
+                      <CopyButton text={payment.bankName} label="Copy" />
                     </div>
-                    <div>
-                      <span className="text-slate-500 dark:text-slate-400">Số tài khoản:</span>{' '}
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{payment.accountNumber}</span>
+                    <div className="flex items-center">
+                      <span className="text-slate-500 dark:text-slate-400">Số tài khoản:</span>
+                      <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">{payment.accountNumber}</span>
+                      <CopyButton text={payment.accountNumber} label="Copy" />
                     </div>
-                    <div>
-                      <span className="text-slate-500 dark:text-slate-400">Chủ tài khoản:</span>{' '}
-                      <span className="font-medium text-slate-900 dark:text-slate-100">{payment.accountName}</span>
+                    <div className="flex items-center">
+                      <span className="text-slate-500 dark:text-slate-400">Chủ tài khoản:</span>
+                      <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">{payment.accountName}</span>
+                      <CopyButton text={payment.accountName} label="Copy" />
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-slate-500 dark:text-slate-400">Nội dung CK:</span>
+                      <span className="ml-1 font-bold text-rose-600 dark:text-rose-400">{order ? `Thanh toan don ${order.code}` : 'Mã đơn hàng'}</span>
+                      {order && <CopyButton text={`Thanh toan don ${order.code}`} label="Copy" />}
                     </div>
                   </div>
 
