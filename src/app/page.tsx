@@ -28,18 +28,18 @@ export default async function Home() {
   })
 
   return (
-    <div id="top" className="min-h-screen bg-slate-100">
+    <div id="top" className="min-h-screen bg-slate-100 dark:bg-slate-950">
       <SiteHeader />
 
       {/* Category chips (mobile + desktop) */}
-      <div className="border-b bg-white">
+      <div className="border-b bg-white dark:border-white/10 dark:bg-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-2">
           <div className="flex gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm">
             {categories.map((c) => (
               <Link
                 key={c.id}
                 href={`/category/${c.slug}`}
-                className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-blue-500/15 dark:hover:text-blue-300"
               >
                 {c.name}
               </Link>
@@ -52,18 +52,18 @@ export default async function Home() {
       <main className="mx-auto grid max-w-6xl gap-4 p-4 md:grid-cols-[240px_1fr]">
         {/* Sidebar */}
         <aside className="hidden md:block">
-          <div className="sticky top-[72px] overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-            <div className="bg-slate-50 px-4 py-3 text-sm font-semibold">Danh mục</div>
+          <div className="sticky top-[72px] overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+            <div className="bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 dark:bg-slate-900 dark:text-slate-100">Danh mục</div>
             <div className="p-2">
               {categories.length === 0 ? (
-                <div className="p-3 text-sm text-slate-500">Chưa có danh mục. Vào Admin → Danh mục để tạo.</div>
+                <div className="p-3 text-sm text-slate-500 dark:text-slate-400">Chưa có danh mục. Vào Admin → Danh mục để tạo.</div>
               ) : (
                 <div className="grid">
                   {categories.map((c) => (
                     <Link
                       key={c.id}
                       href={`/category/${c.slug}`}
-                      className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700"
+                      className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 dark:text-slate-200 dark:hover:bg-blue-500/15 dark:hover:text-blue-300"
                     >
                       {c.name}
                     </Link>
@@ -94,23 +94,23 @@ export default async function Home() {
             </div>
 
             <div className="grid gap-3">
-              <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
-                <div className="text-sm font-semibold text-slate-900">Hỗ trợ</div>
-                <div className="mt-1 text-xs text-slate-600">Xác nhận thanh toán & giao hàng nhanh</div>
-                <div className="mt-3 text-xs text-slate-500">(sẽ thêm Zalo/Hotline trong Settings)</div>
+              <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Hỗ trợ</div>
+                <div className="mt-1 text-xs text-slate-600 dark:text-slate-300">Xác nhận thanh toán & giao hàng nhanh</div>
+                <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">(sẽ thêm Zalo/Hotline trong Settings)</div>
               </div>
-              <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
-                <div className="text-sm font-semibold text-slate-900">Ưu đãi</div>
-                <div className="mt-1 text-xs text-slate-600">Giảm giá theo combo / mua nhiều</div>
+              <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+                <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Ưu đãi</div>
+                <div className="mt-1 text-xs text-slate-600 dark:text-slate-300">Giảm giá theo combo / mua nhiều</div>
               </div>
             </div>
           </div>
 
           {/* Featured */}
-          <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold">Sản phẩm nổi bật</h2>
-              <Link href="/search" className="text-sm font-semibold text-blue-700 hover:underline">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Sản phẩm nổi bật</h2>
+              <Link href="/search" className="text-sm font-semibold text-blue-700 hover:underline dark:text-blue-300">
                 Xem tất cả
               </Link>
             </div>
@@ -135,20 +135,20 @@ export default async function Home() {
 
           {/* Sections by category */}
           {sections.map((c) => (
-            <div key={c.id} id={`cat-${c.slug}`} className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+            <div key={c.id} id={`cat-${c.slug}`} className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-base font-bold">{c.name}</h3>
+                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{c.name}</h3>
                 <div className="flex items-center gap-3 text-sm font-semibold">
-                  <Link href={`/category/${c.slug}`} className="text-blue-700 hover:underline">
+                  <Link href={`/category/${c.slug}`} className="text-blue-700 hover:underline dark:text-blue-300">
                     Xem tất cả
                   </Link>
-                  <a href="#top" className="text-blue-700 hover:underline">
+                  <a href="#top" className="text-blue-700 hover:underline dark:text-blue-300">
                     Lên đầu
                   </a>
                 </div>
               </div>
               {c.products.length === 0 ? (
-                <div className="text-sm text-slate-500">Chưa có sản phẩm trong danh mục này.</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">Chưa có sản phẩm trong danh mục này.</div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
                   {c.products.map((p) => (
@@ -173,38 +173,38 @@ export default async function Home() {
         </section>
       </main>
 
-      <footer className="mt-10 border-t bg-white">
+      <footer className="mt-10 border-t bg-white dark:border-white/10 dark:bg-slate-950">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 md:grid-cols-4">
           <div>
-            <div className="font-bold">{shopName}</div>
-            <div className="mt-2 text-sm text-slate-600">Shop tài khoản số • Thanh toán chuyển khoản • Xác nhận thủ công</div>
+            <div className="font-bold text-slate-900 dark:text-slate-100">{shopName}</div>
+            <div className="mt-2 text-sm text-slate-600 dark:text-slate-400">Shop tài khoản số • Thanh toán chuyển khoản • Xác nhận thủ công</div>
           </div>
           <div>
-            <div className="text-sm font-semibold">Hướng dẫn</div>
-            <div className="mt-2 grid gap-1 text-sm text-slate-600">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Hướng dẫn</div>
+            <div className="mt-2 grid gap-1 text-sm text-slate-600 dark:text-slate-400">
               <div>• Cách mua hàng</div>
               <div>• Cách thanh toán</div>
               <div>• Nhận hàng</div>
             </div>
           </div>
           <div>
-            <div className="text-sm font-semibold">Chính sách</div>
-            <div className="mt-2 grid gap-1 text-sm text-slate-600">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Chính sách</div>
+            <div className="mt-2 grid gap-1 text-sm text-slate-600 dark:text-slate-400">
               <div>• Bảo hành</div>
               <div>• Đổi trả</div>
               <div>• Bảo mật</div>
             </div>
           </div>
           <div>
-            <div className="text-sm font-semibold">Liên hệ</div>
-            <div className="mt-2 grid gap-1 text-sm text-slate-600">
+            <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">Liên hệ</div>
+            <div className="mt-2 grid gap-1 text-sm text-slate-600 dark:text-slate-400">
               <div>• Zalo/Hotline: (sắp có)</div>
               <div>• Telegram: (sắp có)</div>
             </div>
           </div>
         </div>
-        <div className="border-t">
-          <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-slate-500">© {new Date().getFullYear()} {shopName}</div>
+        <div className="border-t dark:border-white/10">
+          <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-slate-500 dark:text-slate-400">© {new Date().getFullYear()} {shopName}</div>
         </div>
       </footer>
     </div>

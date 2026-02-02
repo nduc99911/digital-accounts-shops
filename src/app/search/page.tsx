@@ -90,22 +90,22 @@ export default async function SearchPage({
   const totalPages = Math.max(1, Math.ceil(total / take))
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
       <SiteHeader initialQuery={q} />
 
       <main className="mx-auto grid max-w-6xl gap-4 p-4">
-        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
-          <h1 className="text-lg font-extrabold text-slate-900">Tìm kiếm sản phẩm</h1>
-          <div className="mt-1 text-sm text-slate-600">Nhập từ khoá, lọc theo danh mục, giá và sắp xếp.</div>
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+          <h1 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Tìm kiếm sản phẩm</h1>
+          <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">Nhập từ khoá, lọc theo danh mục, giá và sắp xếp.</div>
         </div>
 
         <div className="sticky top-[72px] z-40">
           <ProductSearchControls basePath="/search" showCategory categories={categories} />
         </div>
 
-        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div className="text-sm font-semibold text-slate-700">
+            <div className="text-sm font-semibold text-slate-700 dark:text-slate-200">
               {total} sản phẩm
               {q ? (
                 <span>
@@ -125,7 +125,7 @@ export default async function SearchPage({
                 <Link
                   key={c.slug}
                   href={`/category/${c.slug}`}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-blue-50 hover:text-blue-700"
+                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-blue-50 hover:text-blue-700 dark:bg-slate-900 dark:text-slate-200 dark:ring-white/10 dark:hover:bg-blue-500/15 dark:hover:text-blue-300"
                 >
                   {c.name}
                 </Link>
@@ -134,7 +134,7 @@ export default async function SearchPage({
           </div>
 
           {products.length === 0 ? (
-            <div className="text-sm text-slate-500">Không có sản phẩm phù hợp.</div>
+            <div className="text-sm text-slate-500 dark:text-slate-400">Không có sản phẩm phù hợp.</div>
           ) : (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
               {products.map((p) => (
