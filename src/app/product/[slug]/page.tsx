@@ -6,6 +6,8 @@ import AddToCartButton from './ui'
 import BuyNowButton from './BuyNowButton'
 import SiteHeader from '@/app/_ui/SiteHeader'
 import ProductCard from '@/app/_ui/ProductCard'
+import RecentlyViewed from '@/app/_ui/RecentlyViewed'
+import TrackProductView from './TrackProductView'
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -26,6 +28,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
+      <TrackProductView product={{
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        salePriceVnd: p.salePriceVnd,
+        listPriceVnd: p.listPriceVnd,
+        imageUrl: p.imageUrl,
+      }} />
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl p-4">
@@ -156,6 +166,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
           </div>
         ) : null}
+
+        {/* Recently Viewed */}
+        <RecentlyViewed excludeId={p.id} />
       </main>
     </div>
   )
