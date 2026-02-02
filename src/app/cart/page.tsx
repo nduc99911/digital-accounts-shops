@@ -5,7 +5,6 @@ import { useMemo, useState, useEffect, useCallback } from 'react'
 import { cartTotal, readCart, writeCart, type CartItem } from '@/lib/cart'
 import { formatVnd } from '@/lib/shop'
 import { useToast } from '@/app/_ui/ToastProvider'
-import SiteHeader from '../_ui/SiteHeader'
 
 // Animated number component for price updates
 function AnimatedPrice({ value }: { value: number }) {
@@ -336,10 +335,40 @@ export default function CartPage() {
     }
   }, [items, showToast])
 
+  // Simple cart header for client component
+  const CartHeader = () => (
+    <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-4 px-4">
+        <Link href="/" className="shrink-0 group">
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-lg">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="hidden text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent sm:block">
+              Shop
+            </span>
+          </div>
+        </Link>
+        <div className="flex-1" />
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-violet-100 hover:text-violet-700"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Tiếp tục mua sắm
+        </Link>
+      </div>
+    </header>
+  )
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-        <SiteHeader />
+        <CartHeader />
         <div className="flex h-[60vh] items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-200 border-t-violet-600" />
@@ -352,7 +381,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <SiteHeader />
+      <CartHeader />
 
       {/* Page header */}
       <div className="relative overflow-hidden">

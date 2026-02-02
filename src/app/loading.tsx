@@ -1,10 +1,19 @@
 import { SectionSkeleton, FlashSaleSkeleton } from '@/app/_ui/Skeletons'
-import SiteHeader from '@/app/_ui/SiteHeader'
 
 export default function HomeLoading() {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
-      <SiteHeader />
+      {/* Header skeleton */}
+      <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20">
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-4 px-4">
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-gradient-to-br from-violet-300 to-fuchsia-300" />
+          <div className="hidden h-6 w-32 animate-pulse rounded bg-slate-200 sm:block" />
+          <div className="flex-1">
+            <div className="h-10 animate-pulse rounded-xl bg-slate-200" />
+          </div>
+          <div className="hidden h-10 w-32 animate-pulse rounded-xl bg-slate-200 sm:block" />
+        </div>
+      </header>
 
       {/* Category chips skeleton */}
       <div className="border-b bg-white dark:border-white/10 dark:bg-slate-950">
