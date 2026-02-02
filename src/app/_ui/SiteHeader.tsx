@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getCurrentCustomer } from '@/lib/customerAuth'
 import SearchAutocomplete from './SearchAutocomplete'
+import DarkModeToggle from './DarkModeToggle'
 
 export default async function SiteHeader({
   initialQuery,
@@ -37,6 +38,18 @@ export default async function SiteHeader({
 
         {/* Navigation */}
         <nav className="hidden items-center gap-2 sm:flex">
+          <DarkModeToggle />
+          
+          <Link
+            href="/wishlist"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition-all hover:bg-rose-100 hover:text-rose-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
+            title="Yêu thích"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </Link>
+
           <Link
             href="/cart"
             className="group flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-violet-100 hover:text-violet-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-violet-900/30 dark:hover:text-violet-400"

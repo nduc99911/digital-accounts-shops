@@ -1,5 +1,9 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { formatVnd } from '@/lib/shop'
+import { useToast } from '@/app/_ui/ToastProvider'
 
 export default function ProductCard({
   p,
@@ -16,10 +20,43 @@ export default function ProductCard({
     stockQty?: number
   }
 }) {
+  const [isInWishlist, setIsInWishlist] = useState(false)
+  const { showToast } = useToast()
   const img = p.imageUrl || `https://picsum.photos/seed/${p.slug}/600/450`
   const discount = p.listPriceVnd > 0 ? Math.max(0, Math.round((1 - p.salePriceVnd / p.listPriceVnd) * 100)) : 0
   const outOfStock = typeof p.stockQty === 'number' ? p.stockQty <= 0 : false
   const bestSeller = p.soldQty >= 50
+
+  useEffect(() => {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]')
+    setIsInWishlist(wishlist.some((item: any) => item.id === p.id))
+  }, [p.id])
+
+  const toggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]')
+    
+    if (isInWishlist) {
+      const newWishlist = wishlist.filter((item: any) => item.id !== p.id)
+      localStorage.setItem('wishlist', JSON.stringify(newWishlist))
+      setIsInWishlist(false)
+      showToast('Đã xóa khỏi yêu thích', 'success')
+    } else {
+      wishlist.push({
+        id: p.id,
+        slug: p.slug,
+        name: p.name,
+        salePriceVnd: p.salePriceVnd,
+        listPriceVnd: p.listPriceVnd,
+        imageUrl: p.imageUrl,
+        duration: p.duration,
+      })
+      localStorage.setItem('wishlist', JSON.stringify(wishlist))
+      setIsInWishlist(true)
+      showToast('Đã thêm vào yêu thích', 'success')
+    }
+  }
 
   return (
     <Link
@@ -40,6 +77,20 @@ export default function ProductCard({
 
         {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+        {/* Wishlist button */}
+        <button
+          onClick={toggleWishlist}
+          className={`absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full shadow-lg transition-all ${
+            isInWishlist
+              ? 'bg-rose-500 text-white'
+              : 'bg-white/90 text-slate-600 hover:bg-rose-100 hover:text-rose-600'
+          }`}
+        >
+          <svg className="h-5 w-5" fill={isInWishlist ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
 
         {/* Badges */}
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
