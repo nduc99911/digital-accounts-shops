@@ -24,6 +24,9 @@ export default async function AdminHome() {
           <Link className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white" href="/admin/orders">
             Đơn hàng
           </Link>
+          <Link className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white" href="/admin/payments/viettelpay">
+            ViettelPay Log
+          </Link>
         </div>
       </div>
     </div>
