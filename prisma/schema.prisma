@@ -64,20 +64,22 @@ model Product {
   orderItems    OrderItem[]
   stockItems    StockItem[]
   fulfillments  OrderFulfillment[]
+  reviews       Review[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
 
 model CustomerUser {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  name         String?
-  phone        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  sessions     CustomerSession[]
-  orders       Order[]
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  name           String?
+  phone          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  sessions       CustomerSession[]
+  orders         Order[]
+  reviews        Review[]
   passwordResets PasswordResetToken[]
 }
 
