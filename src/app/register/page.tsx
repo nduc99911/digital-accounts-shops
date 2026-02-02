@@ -1,4 +1,13 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
+import { generateMetadata as genMeta } from '@/lib/metadata'
+
+export const metadata: Metadata = genMeta({
+  title: 'Đăng ký tài khoản',
+  description: 'Tạo tài khoản mới để mua sắm các dịch vụ premium giá tốt.',
+  path: '/register',
+  noIndex: true,
+})
 
 export default function RegisterPage() {
   return (

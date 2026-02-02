@@ -1,4 +1,13 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
+import { generateMetadata as genMeta } from '@/lib/metadata'
+
+export const metadata: Metadata = genMeta({
+  title: 'Đăng nhập',
+  description: 'Đăng nhập vào tài khoản của bạn để quản lý đơn hàng và thông tin cá nhân.',
+  path: '/login',
+  noIndex: true,
+})
 
 export default function LoginPage() {
   return (

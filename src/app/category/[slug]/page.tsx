@@ -1,11 +1,36 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import ProductCard from '@/app/_ui/ProductCard'
 import Pagination from '@/app/_ui/Pagination'
 import SiteHeader from '@/app/_ui/SiteHeader'
+import { generateCategoryMetadata } from '@/lib/metadata'
 
 const PAGE_SIZE = 24
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const category = await prisma.category.findUnique({
+    where: { slug },
+    select: { name: true, slug: true },
+  })
+  
+  if (!category) {
+    return {
+      title: 'Không tìm thấy danh mục',
+    }
+  }
+  
+  return generateCategoryMetadata({
+    name: category.name,
+    slug: category.slug,
+  })
+}
 
 type SearchParams = {
   q?: string

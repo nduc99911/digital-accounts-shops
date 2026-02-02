@@ -1,9 +1,28 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import ProductCard from '@/app/_ui/ProductCard'
 import ProductSearchControls from '@/app/_ui/ProductSearchControls'
 import Pagination from '@/app/_ui/Pagination'
 import SiteHeader from '@/app/_ui/SiteHeader'
+import { generateMetadata as genMeta } from '@/lib/metadata'
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}): Promise<Metadata> {
+  const sp = await searchParams
+  const q = typeof sp.q === 'string' ? sp.q : ''
+  
+  return genMeta({
+    title: q ? `Kết quả tìm kiếm: ${q}` : 'Tìm kiếm sản phẩm',
+    description: q 
+      ? `Tìm kiếm "${q}" - Khám phá hàng trăm tài khoản premium giá tốt tại Premium Digital Store.`
+      : 'Tìm kiếm Netflix, Spotify, ChatGPT, Canva và hơn 100+ dịch vụ premium. Giá tốt nhất, giao hàng tự động.',
+    path: '/search',
+  })
+}
 
 function toInt(v: string | undefined, fallback: number) {
   const n = Number(v)

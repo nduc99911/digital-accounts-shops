@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import { formatVnd } from '@/lib/shop'
 import AddToCartButton from './ui'
@@ -8,6 +9,40 @@ import SiteHeader from '@/app/_ui/SiteHeader'
 import ProductCard from '@/app/_ui/ProductCard'
 import RecentlyViewed from '@/app/_ui/RecentlyViewed'
 import TrackProductView from './TrackProductView'
+import { generateProductMetadata } from '@/lib/metadata'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    select: {
+      name: true,
+      slug: true,
+      shortDesc: true,
+      description: true,
+      imageUrl: true,
+      salePriceVnd: true,
+    },
+  })
+
+  if (!product) {
+    return {
+      title: 'Không tìm thấy sản phẩm',
+    }
+  }
+
+  return generateProductMetadata({
+    name: product.name,
+    description: product.shortDesc || product.description || product.name,
+    slug: product.slug,
+    imageUrl: product.imageUrl,
+    price: product.salePriceVnd,
+  })
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
