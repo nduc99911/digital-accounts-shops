@@ -431,9 +431,9 @@ export default async function Home() {
           <div>
             <div className="text-sm font-bold text-slate-900 dark:text-slate-100">Hướng dẫn</div>
             <div className="mt-4 grid gap-2 text-sm text-slate-600 dark:text-slate-400">
-              <a href="#" className="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Cách mua hàng</a>
-              <a href="#" className="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Cách thanh toán</a>
-              <a href="#" className="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Nhận hàng</a>
+              <Link href="/huong-dan" className="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Cách mua hàng</Link>
+              <Link href="/huong-dan" className="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Cách thanh toán</Link>
+              <Link href="/huong-dan" className="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Nhận hàng</Link>
             </div>
           </div>
           <div>
