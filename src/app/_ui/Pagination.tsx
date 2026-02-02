@@ -1,12 +1,6 @@
 import Link from 'next/link'
 
-export default function Pagination({
-  basePath,
-  searchParams,
-  params,
-  page,
-  totalPages,
-}: {
+interface PaginationProps {
   basePath: string
   /** Back-compat: older pages pass `searchParams` directly (Record<string, string|string[]|undefined>). */
   searchParams?: Record<string, string | string[] | undefined>
@@ -14,7 +8,21 @@ export default function Pagination({
   params?: Record<string, string | string[] | undefined>
   page: number
   totalPages: number
-}) {
+  totalItems?: number
+  pageSize?: number
+  onPageSizeChange?: (size: number) => void
+}
+
+export default function Pagination({
+  basePath,
+  searchParams,
+  params,
+  page,
+  totalPages,
+  totalItems,
+  pageSize,
+  onPageSizeChange,
+}: PaginationProps) {
   if (totalPages <= 1) return null
 
   const toParams = (overrides: Record<string, string | undefined>) => {
@@ -45,8 +53,22 @@ export default function Pagination({
   const pages = [] as number[]
   for (let i = start; i <= end; i++) pages.push(i)
 
+  const startItem = totalItems ? (page - 1) * (pageSize || 12) + 1 : null
+  const endItem = totalItems ? Math.min(page * (pageSize || 12), totalItems) : null
+
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+    <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+      {/* Left: Results info */}
+      <div className="text-sm text-slate-600 dark:text-slate-400">
+        {totalItems != null && (
+          <span>
+            Hiển thị <span className="font-medium text-slate-900 dark:text-slate-200">{startItem}-{endItem}</span> của <span className="font-medium text-slate-900 dark:text-slate-200">{totalItems}</span> sản phẩm
+          </span>
+        )}
+      </div>
+
+      {/* Center: Page numbers */}
+      <div className="flex flex-wrap items-center justify-center gap-2">
       <Link
         href={toParams({ page: page > 1 ? String(page - 1) : undefined })}
         aria-disabled={page <= 1}
@@ -108,6 +130,24 @@ export default function Pagination({
       >
         Sau
       </Link>
+      </div>
+
+      {/* Right: Page size selector */}
+      {onPageSizeChange && pageSize && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-slate-600 dark:text-slate-400">Hiển thị:</span>
+          <select
+            value={pageSize}
+            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+            className="rounded-md bg-white px-2 py-1.5 text-sm text-slate-900 ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:focus:ring-blue-500"
+          >
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={48}>48</option>
+            <option value={96}>96</option>
+          </select>
+        </div>
+      )}
     </div>
   )
 }
