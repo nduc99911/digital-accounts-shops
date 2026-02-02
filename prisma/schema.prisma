@@ -186,3 +186,41 @@ model PaymentTransaction {
   @@index([provider, occurredAt])
   @@unique([provider, occurredAt, amountInVnd, description])
 }
+
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      CustomerUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int      @db.SmallInt
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model Coupon {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  discount    Int       // Percentage or fixed amount
+  type        String    @default("PERCENT") // PERCENT or FIXED
+  minOrder    Int       @default(0)
+  maxDiscount Int?
+  usageLimit  Int       @default(100)
+  usedCount   Int       @default(0)
+  expiresAt   DateTime?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getCurrentCustomer } from '@/lib/customerAuth'
 import SearchAutocomplete from './SearchAutocomplete'
 import DarkModeToggle from './DarkModeToggle'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default async function SiteHeader({
   initialQuery,
@@ -38,6 +39,7 @@ export default async function SiteHeader({
 
         {/* Navigation */}
         <nav className="hidden items-center gap-2 sm:flex">
+          <LanguageSwitcher />
           <DarkModeToggle />
           
           <Link
