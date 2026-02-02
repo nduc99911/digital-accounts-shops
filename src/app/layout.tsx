@@ -4,6 +4,8 @@ import "./globals.css";
 import { ToastProvider } from "./_ui/ToastProvider";
 import FakePurchaseNotifications from "./_ui/FakePurchaseNotifications";
 import FloatingSupport from "./_ui/FloatingSupport";
+import FacebookPixel from "./_analytics/FacebookPixel";
+import GoogleAnalytics from "./_analytics/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -165,6 +167,8 @@ export default function RootLayout({
           <FakePurchaseNotifications />
           <FloatingSupport />
         </ToastProvider>
+        <FacebookPixel />
+        <GoogleAnalytics />
       </body>
     </html>
   );
