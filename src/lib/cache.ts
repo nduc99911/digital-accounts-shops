@@ -1,9 +1,23 @@
 import { Redis } from 'ioredis'
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379')
+let redis: Redis | null = null
+
+try {
+  redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+    retryStrategy: () => null, // Don't retry
+    maxRetriesPerRequest: 0,
+  })
+  
+  redis.on('error', () => {
+    redis = null
+  })
+} catch {
+  redis = null
+}
 
 export const cache = {
   async get<T>(key: string): Promise<T | null> {
+    if (!redis) return null
     try {
       const data = await redis.get(key)
       return data ? JSON.parse(data) : null
@@ -13,6 +27,7 @@ export const cache = {
   },
 
   async set(key: string, value: any, ttlSeconds = 3600): Promise<void> {
+    if (!redis) return
     try {
       await redis.setex(key, ttlSeconds, JSON.stringify(value))
     } catch {
@@ -21,6 +36,7 @@ export const cache = {
   },
 
   async del(key: string): Promise<void> {
+    if (!redis) return
     try {
       await redis.del(key)
     } catch {
@@ -29,6 +45,7 @@ export const cache = {
   },
 
   async delPattern(pattern: string): Promise<void> {
+    if (!redis) return
     try {
       const keys = await redis.keys(pattern)
       if (keys.length > 0) {
