@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getCurrentCustomer } from '@/lib/customerAuth'
+import SearchAutocomplete from './SearchAutocomplete'
 
 export default async function SiteHeader({
   initialQuery,
@@ -16,23 +17,7 @@ export default async function SiteHeader({
           {shopName}
         </Link>
 
-        <form action="/search" method="get" className="flex flex-1">
-          <div className="flex w-full overflow-hidden rounded-md bg-white ring-1 ring-black/5 dark:bg-slate-900 dark:ring-white/10">
-            <input
-              name="q"
-              defaultValue={initialQuery || ''}
-              className="w-full px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:bg-transparent dark:text-slate-100 dark:placeholder:text-slate-500"
-              placeholder="Tìm kiếm sản phẩm…"
-              autoComplete="off"
-            />
-            <button
-              type="submit"
-              className="bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
-            >
-              Tìm
-            </button>
-          </div>
-        </form>
+        <SearchAutocomplete initialQuery={initialQuery} />
 
         <nav className="hidden items-center gap-2 text-sm sm:flex">
           <Link
