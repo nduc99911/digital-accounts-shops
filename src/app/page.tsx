@@ -1,11 +1,14 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import { cache, cacheKeys } from '@/lib/cache'
 import ProductCard from './_ui/ProductCard'
 import SiteHeader from './_ui/SiteHeader'
 import FlashSale from './_ui/FlashSale'
 
-export default async function Home() {
-  const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
+async function getHomepageData() {
+  // Try cache first
+  const cached = await cache.get(cacheKeys.homepage())
+  if (cached) return cached
 
   const categories = await prisma.category.findMany({
     orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
@@ -28,7 +31,6 @@ export default async function Home() {
     },
   })
 
-  // Flash sale products: products with discount >= 20%
   const flashProducts = await prisma.product.findMany({
     where: {
       active: true,
@@ -39,10 +41,22 @@ export default async function Home() {
     take: 20,
   })
 
-  // Filter products with actual discount >= 20%
   const discountedFlashProducts = flashProducts.filter(
     (p) => p.listPriceVnd > 0 && (1 - p.salePriceVnd / p.listPriceVnd) >= 0.2
   ).slice(0, 8)
+
+  const data = { categories, featured, sections, discountedFlashProducts }
+  
+  // Cache for 5 minutes
+  await cache.set(cacheKeys.homepage(), data, 300)
+  
+  return data
+}
+
+export default async function Home() {
+  const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
+
+  const { categories, featured, sections, discountedFlashProducts } = await getHomepageData()
 
   // Flash sale ends at midnight
   const flashSaleEnd = new Date()
