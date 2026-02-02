@@ -77,10 +77,12 @@ export default function ProductSearchControls({
   }
 
   return (
-    <div className="rounded-lg bg-white p-3 shadow-sm ring-1 ring-slate-200">
-      <div className={`grid gap-3 ${showCategory ? 'lg:grid-cols-[1fr_220px_220px_220px]' : 'lg:grid-cols-[1fr_240px_240px]'}`}>
+    <div className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+      <div
+        className={`grid gap-3 ${showCategory ? 'lg:grid-cols-[1fr_220px_220px_220px]' : 'lg:grid-cols-[1fr_240px_240px]'}`}
+      >
         <div>
-          <div className="text-xs font-semibold text-slate-600">Tìm kiếm</div>
+          <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Tìm kiếm</div>
           <input
             ref={qRef}
             defaultValue={q}
@@ -91,7 +93,7 @@ export default function ProductSearchControls({
               }
             }}
             placeholder="Nhập tên sản phẩm..."
-            className="mt-1 w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600"
+            className="mt-1 w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:placeholder:text-slate-500 dark:focus:ring-blue-500"
           />
           <div className="mt-2 flex gap-2">
             <button
@@ -99,7 +101,7 @@ export default function ProductSearchControls({
                 const v = readInputs()
                 push({ q: v.q, sort, cat, min: v.min, max: v.max })
               }}
-              className="rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+              className="rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
             >
               Tìm
             </button>
@@ -110,7 +112,7 @@ export default function ProductSearchControls({
                 if (maxRef.current) maxRef.current.value = ''
                 startTransition(() => router.push(path))
               }}
-              className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50"
+              className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-200 dark:ring-white/10 dark:hover:bg-slate-800"
             >
               Reset
             </button>
@@ -118,7 +120,7 @@ export default function ProductSearchControls({
         </div>
 
         <div>
-          <div className="text-xs font-semibold text-slate-600">Sắp xếp</div>
+          <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Sắp xếp</div>
           <select
             value={sort}
             onChange={(e) => {
@@ -126,7 +128,7 @@ export default function ProductSearchControls({
               const inputs = readInputs()
               push({ q: inputs.q, sort: v, cat, min: inputs.min, max: inputs.max })
             }}
-            className="mt-1 w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600"
+            className="mt-1 w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:focus:ring-blue-500"
           >
             {sortOptions.map((o) => (
               <option key={o.value} value={o.value}>
@@ -137,7 +139,7 @@ export default function ProductSearchControls({
 
           {showCategory ? (
             <div className="mt-3">
-              <div className="text-xs font-semibold text-slate-600">Danh mục</div>
+              <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Danh mục</div>
               <select
                 value={cat}
                 onChange={(e) => {
@@ -145,7 +147,7 @@ export default function ProductSearchControls({
                   const inputs = readInputs()
                   push({ q: inputs.q, sort, cat: v, min: inputs.min, max: inputs.max })
                 }}
-                className="mt-1 w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600"
+                className="mt-1 w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:focus:ring-blue-500"
               >
                 <option value="">Tất cả</option>
                 {(categories || []).map((c) => (
@@ -159,7 +161,7 @@ export default function ProductSearchControls({
         </div>
 
         <div>
-          <div className="text-xs font-semibold text-slate-600">Khoảng giá (VND)</div>
+          <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Khoảng giá (VND)</div>
           <div className="mt-1 grid grid-cols-2 gap-2">
             <input
               ref={minRef}
@@ -170,7 +172,7 @@ export default function ProductSearchControls({
               }}
               placeholder="Min"
               inputMode="numeric"
-              className="w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:placeholder:text-slate-500 dark:focus:ring-blue-500"
             />
             <input
               ref={maxRef}
@@ -181,10 +183,10 @@ export default function ProductSearchControls({
               }}
               placeholder="Max"
               inputMode="numeric"
-              className="w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-slate-200 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600 dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:placeholder:text-slate-500 dark:focus:ring-blue-500"
             />
           </div>
-          <div className="mt-1 text-xs text-slate-500">Nhập số rồi click ra ngoài để áp dụng.</div>
+          <div className="mt-1 text-xs text-slate-500 dark:text-slate-500">Nhập số rồi click ra ngoài để áp dụng.</div>
         </div>
       </div>
     </div>

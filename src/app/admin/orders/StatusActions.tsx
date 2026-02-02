@@ -33,11 +33,13 @@ export default function StatusActions({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <span
         className={
-          'rounded-full px-2 py-1 text-xs font-medium ' +
-          (status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')
+          'rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ' +
+          (status === 'SUCCESS'
+            ? 'bg-emerald-500/15 text-emerald-200 ring-emerald-500/30'
+            : 'bg-amber-500/15 text-amber-200 ring-amber-500/30')
         }
       >
         {status === 'SUCCESS' ? 'SUCCESS' : 'PENDING'}
@@ -46,7 +48,7 @@ export default function StatusActions({
       <button
         disabled={loading || status === 'SUCCESS'}
         onClick={() => setStatus('SUCCESS')}
-        className="rounded-md border px-2 py-1 text-xs disabled:opacity-50"
+        className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-100 hover:bg-white/10 disabled:opacity-50"
       >
         Mark SUCCESS
       </button>
@@ -54,12 +56,12 @@ export default function StatusActions({
       <button
         disabled={loading || status === 'PENDING_PAYMENT'}
         onClick={() => setStatus('PENDING_PAYMENT')}
-        className="rounded-md border px-2 py-1 text-xs disabled:opacity-50"
+        className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-100 hover:bg-white/10 disabled:opacity-50"
       >
         Mark PENDING
       </button>
 
-      {err ? <span className="text-xs text-red-600">{err}</span> : null}
+      {err ? <span className="text-xs text-rose-400">{err}</span> : null}
     </div>
   )
 }

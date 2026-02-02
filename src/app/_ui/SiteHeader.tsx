@@ -1,71 +1,104 @@
 import Link from 'next/link'
 import { getCurrentCustomer } from '@/lib/customerAuth'
+import SearchAutocomplete from './SearchAutocomplete'
 
 export default async function SiteHeader({
   initialQuery,
 }: {
   initialQuery?: string
 }) {
-  const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Divine Style Shop'
+  const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || process.env.SHOP_NAME || 'Shop'
   const customer = await getCurrentCustomer()
 
   return (
-    <header className="sticky top-0 z-50 bg-blue-700 text-white shadow">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-        <Link href="/" className="shrink-0 text-base font-extrabold tracking-tight sm:text-lg">
-          {shopName}
+    <header className="sticky top-0 z-50">
+      {/* Glassmorphism background */}
+      <div className="absolute inset-0 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-lg shadow-slate-200/20 dark:bg-slate-950/80 dark:border-white/5 dark:shadow-black/20" />
+      
+      <div className="relative mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+        {/* Logo */}
+        <Link href="/" className="shrink-0 group">
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white shadow-lg shadow-violet-500/30">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="hidden text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent sm:block">
+              {shopName}
+            </span>
+          </div>
         </Link>
 
-        <form action="/search" method="get" className="flex flex-1">
-          <div className="flex w-full overflow-hidden rounded-md bg-white ring-1 ring-black/5">
-            <input
-              name="q"
-              defaultValue={initialQuery || ''}
-              className="w-full px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400"
-              placeholder="Tìm kiếm sản phẩm…"
-              autoComplete="off"
-            />
-            <button
-              type="submit"
-              className="bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800"
-            >
-              Tìm
-            </button>
-          </div>
-        </form>
+        {/* Search */}
+        <div className="flex-1 max-w-2xl">
+          <SearchAutocomplete initialQuery={initialQuery} />
+        </div>
 
-        <nav className="hidden items-center gap-2 text-sm sm:flex">
-          <Link href="/cart" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-            Giỏ hàng
+        {/* Navigation */}
+        <nav className="hidden items-center gap-2 sm:flex">
+          <Link
+            href="/cart"
+            className="group flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-violet-100 hover:text-violet-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-violet-900/30 dark:hover:text-violet-400"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span>Giỏ hàng</span>
           </Link>
 
           {customer ? (
             <>
-              <Link href="/account/orders" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-                Đơn hàng
+              <Link
+                href="/account/orders"
+                className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-violet-100 hover:text-violet-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-violet-900/30 dark:hover:text-violet-400"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span>Đơn hàng</span>
               </Link>
               <form action="/api/auth/logout" method="post">
-                <button className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">Đăng xuất</button>
+                <button className="flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-rose-100 hover:text-rose-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-rose-900/30 dark:hover:text-rose-400">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
               </form>
             </>
           ) : (
-            <Link href="/login" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-              Đăng nhập
+            <Link
+              href="/login"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:shadow-violet-500/50 hover:scale-105"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              <span>Đăng nhập</span>
             </Link>
           )}
 
-          <Link href="/admin" className="rounded-md bg-white/15 px-3 py-2 font-semibold hover:bg-white/20">
-            Admin
+          <Link
+            href="/admin"
+            className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="hidden lg:inline">Admin</span>
           </Link>
         </nav>
 
-        {/* Mobile quick actions */}
+        {/* Mobile */}
         <div className="flex items-center gap-2 sm:hidden">
-          <Link href="/cart" className="rounded-md bg-white/15 px-3 py-2 text-sm font-semibold hover:bg-white/20">
-            Giỏ
-          </Link>
-          <Link href="/admin" className="rounded-md bg-white/15 px-3 py-2 text-sm font-semibold hover:bg-white/20">
-            Admin
+          <Link
+            href="/cart"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
           </Link>
         </div>
       </div>

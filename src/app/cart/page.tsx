@@ -4,30 +4,44 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { cartTotal, readCart, writeCart, type CartItem } from '@/lib/cart'
 import { formatVnd } from '@/lib/shop'
+import { useToast } from '@/app/_ui/ToastProvider'
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>(() => readCart())
+  const { showToast } = useToast()
 
   const total = useMemo(() => cartTotal(items), [items])
 
   function inc(productId: string) {
+    const item = items.find((it) => it.productId === productId)
     const next = items.map((it) => (it.productId === productId ? { ...it, qty: it.qty + 1 } : it))
     setItems(next)
     writeCart(next)
+    if (item) {
+      showToast(`Đã tăng số lượng "${item.name}"`, 'info', 1500)
+    }
   }
 
   function dec(productId: string) {
+    const item = items.find((it) => it.productId === productId)
     const next = items
       .map((it) => (it.productId === productId ? { ...it, qty: Math.max(1, it.qty - 1) } : it))
       .filter((it) => it.qty > 0)
     setItems(next)
     writeCart(next)
+    if (item) {
+      showToast(`Đã giảm số lượng "${item.name}"`, 'info', 1500)
+    }
   }
 
   function remove(productId: string) {
+    const item = items.find((it) => it.productId === productId)
     const next = items.filter((it) => it.productId !== productId)
     setItems(next)
     writeCart(next)
+    if (item) {
+      showToast(`Đã xóa "${item.name}" khỏi giỏ hàng`, 'success', 2000)
+    }
   }
 
   return (
