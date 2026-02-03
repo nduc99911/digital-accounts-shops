@@ -27,6 +27,9 @@ export default async function AdminHome() {
           <Link className="rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/15" href="/admin/payments/viettelpay">
             ViettelPay Log
           </Link>
+          <Link className="rounded-md bg-violet-600 px-3 py-2 text-sm font-medium text-white hover:bg-violet-500" href="/admin/sepay">
+            SePay Auto
+          </Link>
         </div>
       </div>
     </div>
