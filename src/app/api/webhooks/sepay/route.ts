@@ -77,7 +77,6 @@ export async function POST(request: NextRequest) {
       where: { id: order.id },
       data: {
         status: 'SUCCESS',
-        paymentStatus: 'paid',
         updatedAt: new Date(),
       },
     })
