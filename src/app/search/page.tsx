@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import ProductCard from '@/app/_ui/ProductCard'
-import ProductSearchControls from '@/app/_ui/ProductSearchControls'
+import FilterSidebar from './FilterSidebar'
 import Pagination from '@/app/_ui/Pagination'
 import SiteHeader from '@/app/_ui/SiteHeader'
 import { generateMetadata as genMeta } from '@/lib/metadata'
@@ -112,43 +112,39 @@ export default async function SearchPage({
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
       <SiteHeader initialQuery={q} />
 
-      <main className="mx-auto grid max-w-6xl gap-4 p-4">
-        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-          <h1 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Tìm kiếm sản phẩm</h1>
-          <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">Nhập từ khoá, lọc theo danh mục, giá và sắp xếp.</div>
-        </div>
+      <main className="mx-auto grid max-w-7xl gap-4 p-4 lg:grid-cols-[280px_1fr]">
+        {/* Filter Sidebar */}
+        <FilterSidebar categories={categories} totalProducts={total} />
 
-        <div className="sticky top-[72px] z-40">
-          <ProductSearchControls basePath="/search" showCategory categories={categories} />
-        </div>
-
-        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              {total} sản phẩm
-              {q ? (
-                <span>
-                  {' '}
-                  • từ khoá: <span className="font-bold">{q}</span>
-                </span>
-              ) : null}
-              {cat ? (
-                <span>
-                  {' '}
-                  • danh mục: <span className="font-bold">{cat}</span>
-                </span>
-              ) : null}
-            </div>
-            <div className="flex gap-2">
-              {categories.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`/category/${c.slug}`}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200 hover:bg-blue-50 hover:text-blue-700 dark:bg-slate-900 dark:text-slate-200 dark:ring-white/10 dark:hover:bg-blue-500/15 dark:hover:text-blue-300"
-                >
-                  {c.name}
-                </Link>
-              ))}
+        {/* Main Content */}
+        <div>
+          {/* Header with Sort */}
+          <div 
+            className="mb-4 rounded-2xl p-4"
+            style={{
+              background: 'rgba(255, 255, 255, 0.7)',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.5)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h1 className="text-lg font-extrabold text-slate-900">
+                  {q ? `Kết quả: "${q}"` : 'Tất cả sản phẩm'}
+                </h1>
+                <div className="mt-1 text-sm text-slate-500">
+                  {total} sản phẩm
+                  {cat && (
+                    <span> • Danh mục: <span className="font-medium text-violet-600">{categories.find(c => c.slug === cat)?.name || cat}</span></span>
+                  )}
+                </div>
+              </div>
+              
+              {/* Sort Dropdown - integrated in FilterSidebar for mobile, shown here for desktop */}
+              <div className="hidden lg:block">
+                {/* Sort is in FilterSidebar */}
+              </div>
             </div>
           </div>
 
@@ -174,9 +170,12 @@ export default async function SearchPage({
               ))}
             </div>
           )}
+          
+          {/* Pagination */}
+          <div className="mt-6">
+            <Pagination basePath="/search" searchParams={sp} page={page} totalPages={totalPages} />
+          </div>
         </div>
-
-        <Pagination basePath="/search" searchParams={sp} page={page} totalPages={totalPages} />
       </main>
     </div>
   )
