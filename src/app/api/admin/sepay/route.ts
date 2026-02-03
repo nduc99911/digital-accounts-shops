@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getCurrentAdmin } from '@/lib/adminAuth'
+import { isAuthed } from '@/lib/auth'
 
 // Get SePay settings
 export async function GET() {
-  const admin = await getCurrentAdmin()
-  if (!admin) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -23,8 +22,7 @@ export async function GET() {
 
 // Update SePay settings
 export async function PUT(request: NextRequest) {
-  const admin = await getCurrentAdmin()
-  if (!admin) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
