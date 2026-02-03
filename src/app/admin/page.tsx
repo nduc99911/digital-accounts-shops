@@ -30,6 +30,9 @@ export default async function AdminHome() {
           <Link className="rounded-md bg-violet-600 px-3 py-2 text-sm font-medium text-white hover:bg-violet-500" href="/admin/sepay">
             SePay Auto
           </Link>
+          <Link className="rounded-md bg-pink-600 px-3 py-2 text-sm font-medium text-white hover:bg-pink-500" href="/admin/settings">
+            ⚙️ Cài đặt
+          </Link>
         </div>
       </div>
     </div>
