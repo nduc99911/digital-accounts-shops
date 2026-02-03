@@ -8,7 +8,7 @@
 - Chuẩn hoá scope “UI parity DivineShop”: xác định checklist màn hình/luồng chi tiết (Home/Category/Product/Cart/Checkout/Order detail/Admin screens).
 
 ## Blockers (max 1–2)
-- Chưa có mẫu tham chiếu/URL DivineShop hoặc yêu cầu cụ thể về “parity” (mức độ giống UI/UX đến đâu, thành phần bắt buộc).
+- ✅ Đã có mẫu tham chiếu DivineShop: http://divineshop.vn — cần audit và lập checklist UI parity chi tiết.
 - Chưa chốt tích hợp đối soát bank (nhà cung cấp API/nguồn dữ liệu giao dịch) cho auto-confirm payment.
 
 ## Next 3
