@@ -58,5 +58,5 @@ export async function POST(req: Request) {
     })
   }
 
-  return NextResponse.redirect(new URL('/admin/settings/payment', req.url))
+  return NextResponse.json({ ok: true })
 }
