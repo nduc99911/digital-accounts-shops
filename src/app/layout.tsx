@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "./_ui/ToastProvider";
+import { SiteSettingsProvider } from "./_ui/SiteSettingsProvider";
 import FakePurchaseNotifications from "./_ui/FakePurchaseNotifications";
 import FloatingSupport from "./_ui/FloatingSupport";
 import FacebookPixel from "./_analytics/FacebookPixel";
@@ -162,11 +163,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ToastProvider>
-          {children}
-          <FakePurchaseNotifications />
-          <FloatingSupport />
-        </ToastProvider>
+        <SiteSettingsProvider>
+          <ToastProvider>
+            {children}
+            <FakePurchaseNotifications />
+            <FloatingSupport />
+          </ToastProvider>
+        </SiteSettingsProvider>
         <FacebookPixel />
         <GoogleAnalytics />
       </body>
