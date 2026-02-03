@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract order code from content
-    // Format: "Thanh toan don ORD123456" or "ORD123456"
-    const orderMatch = tx.content.match(/ORD[\w\d]+/i)
+    // Support formats: "Thanh toan don ORD123", "ORD123", "BL123", "DH123", etc.
+    const orderMatch = tx.content.match(/\b(ORD|BL|DH)[A-Z0-9\-]+\b/i)
     if (!orderMatch) {
       return NextResponse.json({ message: 'No order code found' })
     }
