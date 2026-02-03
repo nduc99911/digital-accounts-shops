@@ -132,15 +132,38 @@ export default async function Home() {
 
         {/* Content */}
         <section className="grid gap-6">
-          {/* Hero Banner - Animated gradient */}
+          <style dangerouslySetInnerHTML={{__html: `
+        @keyframes hero-gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        @keyframes float-slow {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(20px, -20px); }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        .animate-fade-in { animation: fade-in-up 0.6s ease-out forwards; }
+        .animate-fade-in-delay-1 { animation: fade-in-up 0.6s ease-out 0.1s forwards; opacity: 0; }
+        .animate-fade-in-delay-2 { animation: fade-in-up 0.6s ease-out 0.2s forwards; opacity: 0; }
+        .animate-fade-in-delay-3 { animation: fade-in-up 0.6s ease-out 0.3s forwards; opacity: 0; }
+      `}} />
+
+      {/* Hero Banner - Animated gradient */}
           <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
             {/* Main banner */}
             <div 
-              className="relative overflow-hidden rounded-3xl p-8 text-white shadow-2xl"
+              className="animate-fade-in relative overflow-hidden rounded-3xl p-8 text-white shadow-2xl"
               style={{
                 background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 25%, #0891b2 50%, #7c3aed 75%, #c026d3 100%)',
                 backgroundSize: '400% 400%',
-                animation: 'gradient-shift 12s ease infinite',
+                animation: 'hero-gradient 12s ease infinite, fade-in-up 0.6s ease-out',
                 boxShadow: '0 25px 50px -12px rgba(124, 58, 237, 0.35)',
               }}
             >
@@ -149,7 +172,7 @@ export default async function Home() {
                 className="absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-30"
                 style={{
                   background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)',
-                  animation: 'float 8s ease-in-out infinite',
+                  animation: 'float-slow 8s ease-in-out infinite',
                 }}
               />
               <div 
@@ -335,9 +358,17 @@ export default async function Home() {
             </div>
             <div className="p-5">
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {featured.map((p) => (
-                  <ProductCard
+                {featured.map((p, idx) => (
+                  <div 
                     key={p.id}
+                    className="animate-fade-in"
+                    style={{ 
+                      animationDelay: `${idx * 0.05}s`,
+                      opacity: 0,
+                      animationFillMode: 'forwards'
+                    }}
+                  >
+                  <ProductCard
                     p={{
                       id: p.id,
                       slug: p.slug,
@@ -349,22 +380,26 @@ export default async function Home() {
                       imageUrl: p.imageUrl ?? null,
                     }}
                   />
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
           {/* Sections by category */}
-          {sections.map((c) => (
+          {sections.map((c, sectionIdx) => (
             <div 
               key={c.id} 
               id={`cat-${c.slug}`} 
-              className="overflow-hidden rounded-3xl"
+              className="animate-fade-in overflow-hidden rounded-3xl"
               style={{
                 background: 'rgba(255, 255, 255, 0.7)',
                 backdropFilter: 'blur(20px) saturate(180%)',
                 border: '1px solid rgba(255, 255, 255, 0.5)',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)',
+                opacity: 0,
+                animationDelay: `${sectionIdx * 0.1}s`,
+                animationFillMode: 'forwards'
               }}
             >
               <div className="flex items-center justify-between border-b border-slate-100 p-5 dark:border-slate-800">
@@ -396,20 +431,29 @@ export default async function Home() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                    {c.products.map((p) => (
-                      <ProductCard
+                    {c.products.map((p, pIdx) => (
+                      <div 
                         key={p.id}
-                        p={{
-                          id: p.id,
-                          slug: p.slug,
-                          name: p.name,
-                          duration: p.duration,
-                          listPriceVnd: p.listPriceVnd,
-                          salePriceVnd: p.salePriceVnd,
-                          soldQty: p.soldQty,
-                          imageUrl: p.imageUrl ?? null,
+                        className="animate-fade-in"
+                        style={{
+                          opacity: 0,
+                          animationDelay: `${pIdx * 0.05}s`,
+                          animationFillMode: 'forwards'
                         }}
-                      />
+                      >
+                        <ProductCard
+                          p={{
+                            id: p.id,
+                            slug: p.slug,
+                            name: p.name,
+                            duration: p.duration,
+                            listPriceVnd: p.listPriceVnd,
+                            salePriceVnd: p.salePriceVnd,
+                            soldQty: p.soldQty,
+                            imageUrl: p.imageUrl ?? null,
+                          }}
+                        />
+                      </div>
                     ))}
                   </div>
                 )}
