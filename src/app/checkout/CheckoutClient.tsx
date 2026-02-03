@@ -40,7 +40,16 @@ export default function CheckoutClient() {
   const [items, setItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [order, setOrder] = useState<{ code: string } | null>(null)
+  const [order, setOrder] = useState<{ id: string; code: string } | null>(null)
+  const [qrData, setQrData] = useState<{
+    qrDataUrl: string
+    transferContent: string
+    bankName: string
+    accountNumber: string
+    accountName: string
+    amount: number
+  } | null>(null)
+  const [qrLoading, setQrLoading] = useState(false)
 
   const [customerName, setCustomerName] = useState('')
   const [phone, setPhone] = useState('')
@@ -94,7 +103,7 @@ export default function CheckoutClient() {
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.error || 'Tạo đơn thất bại')
 
-      setOrder({ code: data.code })
+      setOrder({ id: data.id, code: data.code })
       clearCart()
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Có lỗi xảy ra'
@@ -110,6 +119,22 @@ export default function CheckoutClient() {
 
   // Auto-generated transfer content
   const transferContent = order ? `Thanh toan don ${order.code}` : ''
+
+  // Fetch dynamic QR code when order is created
+  useEffect(() => {
+    if (order?.id) {
+      setQrLoading(true)
+      fetch(`/api/qr-payment?orderId=${order.id}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.qrDataUrl) {
+            setQrData(data)
+          }
+        })
+        .catch(console.error)
+        .finally(() => setQrLoading(false))
+    }
+  }, [order?.id])
 
   if (order) {
     return (
@@ -140,51 +165,83 @@ export default function CheckoutClient() {
             <div className="mb-4 text-lg font-bold text-blue-900 dark:text-blue-100">💳 Thông tin chuyển khoản</div>
             
             <div className="grid gap-4 md:grid-cols-2">
-              {/* QR Code */}
-              {payment.qrImageUrl ? (
-                <div className="flex flex-col items-center">
-                  <img
-                    src={payment.qrImageUrl}
-                    alt="QR Code"
-                    className="w-full max-w-[200px] rounded-lg border-2 border-white shadow-md"
-                  />
-                  <p className="mt-2 text-xs text-blue-600 dark:text-blue-400">Quét mã để chuyển khoản</p>
-                </div>
-              ) : null}
+              {/* Dynamic QR Code */}
+              <div className="flex flex-col items-center">
+                {qrLoading ? (
+                  <div className="flex h-[200px] w-[200px] items-center justify-center rounded-lg bg-white/50 dark:bg-slate-900/50">
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+                  </div>
+                ) : qrData?.qrDataUrl ? (
+                  <>
+                    <img
+                      src={qrData.qrDataUrl}
+                      alt="QR Thanh toán"
+                      className="w-full max-w-[200px] rounded-lg border-2 border-white shadow-md"
+                    />
+                    <p className="mt-2 text-xs text-blue-600 dark:text-blue-400">Quét mã để chuyển khoản tự động</p>
+                    <p className="text-xs text-slate-500">Đã ghi sẵn số tiền & nội dung</p>
+                  </>
+                ) : payment.qrImageUrl ? (
+                  <>
+                    <img
+                      src={payment.qrImageUrl}
+                      alt="QR Code"
+                      className="w-full max-w-[200px] rounded-lg border-2 border-white shadow-md"
+                    />
+                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">QR tĩnh - cần nhập số tiền & nội dung</p>
+                  </>
+                ) : (
+                  <div className="flex h-[200px] w-[200px] items-center justify-center rounded-lg bg-white/50 text-sm text-slate-500 dark:bg-slate-900/50">
+                    Không có QR
+                  </div>
+                )}
+              </div>
 
               {/* Bank Details */}
               <div className="space-y-3">
                 <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
                   <div className="text-xs text-slate-500 dark:text-slate-400">Ngân hàng</div>
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">{payment.bankName}</span>
-                    <CopyButton text={payment.bankName} label="Copy" />
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{qrData?.bankName || payment.bankName}</span>
+                    <CopyButton text={qrData?.bankName || payment.bankName} label="Copy" />
                   </div>
                 </div>
 
                 <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
                   <div className="text-xs text-slate-500 dark:text-slate-400">Số tài khoản</div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{payment.accountNumber}</span>
-                    <CopyButton text={payment.accountNumber} label="Copy" />
+                    <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{qrData?.accountNumber || payment.accountNumber}</span>
+                    <CopyButton text={qrData?.accountNumber || payment.accountNumber} label="Copy" />
                   </div>
                 </div>
 
                 <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
                   <div className="text-xs text-slate-500 dark:text-slate-400">Chủ tài khoản</div>
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">{payment.accountName}</span>
-                    <CopyButton text={payment.accountName} label="Copy" />
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{qrData?.accountName || payment.accountName}</span>
+                    <CopyButton text={qrData?.accountName || payment.accountName} label="Copy" />
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-emerald-50 p-3 ring-1 ring-emerald-200 dark:bg-emerald-950/30 dark:ring-emerald-800">
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400">Số tiền</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">{formatVnd(qrData?.amount || 0)}</span>
+                    <CopyButton text={String(qrData?.amount || 0)} label="Copy" />
                   </div>
                 </div>
 
                 <div className="rounded-lg bg-amber-50 p-3 ring-1 ring-amber-200 dark:bg-amber-950/30 dark:ring-amber-800">
-                  <div className="text-xs text-amber-600 dark:text-amber-400">Nội dung chuyển khoản (BẮT BUỘC)</div>
+                  <div className="text-xs text-amber-600 dark:text-amber-400">Nội dung chuyển khoản</div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-amber-700 dark:text-amber-300">{transferContent}</span>
-                    <CopyButton text={transferContent} label="Copy" />
+                    <span className="font-mono font-bold text-amber-700 dark:text-amber-300">{qrData?.transferContent || transferContent}</span>
+                    <CopyButton text={qrData?.transferContent || transferContent} label="Copy" />
                   </div>
-                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">⚠️ Ghi đúng nội dung này để được xử lý tự động</p>
+                  {qrData?.qrDataUrl ? (
+                    <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">✅ Đã ghi sẵn trong QR - Khách chỉ cần quét</p>
+                  ) : (
+                    <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">⚠️ Ghi đúng nội dung này để được xử lý tự động</p>
+                  )}
                 </div>
               </div>
             </div>
