@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
+import { encrypt } from '@/lib/encryption'
 
 // SePay webhook secret
 const SEPAY_SECRET = process.env.SEPAY_SECRET || ''
@@ -104,12 +105,15 @@ export async function POST(request: NextRequest) {
       })
 
       if (availableStock) {
+        // Encrypt the value before storing in fulfillment
+        const encryptedValue = encrypt(availableStock.value)
+        
         await prisma.orderFulfillment.create({
           data: {
             orderId: order.id,
             productId: item.productId,
             stockItemId: availableStock.id,
-            value: availableStock.value,
+            value: encryptedValue,
           },
         })
 

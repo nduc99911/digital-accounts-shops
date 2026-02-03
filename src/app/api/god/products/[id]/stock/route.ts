@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAuthed } from '@/lib/auth'
+import { verifyAdminAuth } from '@/lib/adminAuth'
+import { encrypt } from '@/lib/encryption'
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  if (!(await isAuthed())) return NextResponse.json({ ok: false }, { status: 401 })
+  if (!(await verifyAdminAuth())) return NextResponse.json({ ok: false }, { status: 401 })
 
   const { id: productId } = await ctx.params
   const form = await req.formData()
@@ -18,9 +19,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     return NextResponse.redirect(new URL(`/god/products/${productId}/stock`, req.url))
   }
 
+  // Encrypt each stock item before saving
+  const encryptedLines = lines.map((value) => encrypt(value))
+
   // createMany with skipDuplicates uses the @@unique([productId,value])
   const created = await prisma.stockItem.createMany({
-    data: lines.map((value) => ({ productId, value })),
+    data: encryptedLines.map((value) => ({ productId, value })),
     skipDuplicates: true,
   })
 

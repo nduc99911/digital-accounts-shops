@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentCustomer } from '@/lib/customerAuth'
 import { formatVnd } from '@/lib/shop'
+import { decrypt, isEncrypted } from '@/lib/encryption'
 import SiteHeader from '../../../_ui/SiteHeader'
 import CopyButton from './CopyButton'
 
@@ -265,6 +266,17 @@ function DeliverableCard({
   }
   index: number
 }) {
+  // Decrypt the value if it's encrypted
+  let displayValue = fulfillment.value
+  try {
+    if (isEncrypted(fulfillment.value)) {
+      displayValue = decrypt(fulfillment.value)
+    }
+  } catch (error) {
+    console.error('Failed to decrypt fulfillment:', error)
+    displayValue = 'Lỗi giải mã - vui lòng liên hệ hỗ trợ'
+  }
+
   return (
     <div
       className="rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 p-5 dark:from-emerald-900/20 dark:to-teal-900/20 animate-fade-in-up"
@@ -274,10 +286,10 @@ function DeliverableCard({
         <span className="text-xs font-bold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
           {fulfillment.product.name}
         </span>
-        <CopyButton text={fulfillment.value} label="thông tin" />
+        <CopyButton text={displayValue} label="thông tin" />
       </div>
       <div className="rounded-xl bg-white/80 p-4 font-mono text-sm text-slate-700 break-all dark:bg-slate-900/50 dark:text-slate-300">
-        {fulfillment.value}
+        {displayValue}
       </div>
     </div>
   )

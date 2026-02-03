@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAuthed } from '@/lib/auth'
+import { verifyAdminAuth } from '@/lib/adminAuth'
+import { encrypt } from '@/lib/encryption'
 
 // Test SePay webhook - for development only
 export async function POST(request: NextRequest) {
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Test endpoint not available in production' }, { status: 403 })
   }
 
-  if (!(await isAuthed())) {
+  if (!(await verifyAdminAuth())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -84,12 +85,15 @@ export async function POST(request: NextRequest) {
       })
 
       if (availableStock) {
+        // Encrypt the value before storing in fulfillment
+        const encryptedValue = encrypt(availableStock.value)
+        
         const fulfillment = await prisma.orderFulfillment.create({
           data: {
             orderId: order.id,
             productId: item.productId,
             stockItemId: availableStock.id,
-            value: availableStock.value,
+            value: encryptedValue,
           },
         })
         fulfillments.push(fulfillment)
