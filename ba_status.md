@@ -9,7 +9,7 @@
 
 ## Blockers (max 1–2)
 - ✅ Đã có mẫu tham chiếu DivineShop: http://divineshop.vn — cần audit và lập checklist UI parity chi tiết.
-- Chưa chốt tích hợp đối soát bank (nhà cung cấp API/nguồn dữ liệu giao dịch) cho auto-confirm payment.
+- ✅ Đã tích hợp SePay (webhook auto-confirm, payment settings, auto-fulfillment).
 
 ## Next 3
 1. Chốt checklist UI parity theo màn hình + component (bao gồm search thật, listing + pagination/sort, product detail parity).
