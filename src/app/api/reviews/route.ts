@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentCustomer } from '@/lib/customerAuth'
 
+// Get reviews for a product
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const productId = searchParams.get('productId')
@@ -16,38 +17,73 @@ export async function GET(request: NextRequest) {
     orderBy: { createdAt: 'desc' },
   })
 
-  return NextResponse.json(reviews)
+  const avgRating = reviews.length > 0 
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length 
+    : 0
+
+  return NextResponse.json({ 
+    reviews,
+    avgRating: Math.round(avgRating * 10) / 10,
+    totalReviews: reviews.length 
+  })
 }
 
+// Create a review (only for logged in users who purchased the product)
 export async function POST(request: NextRequest) {
   const user = await getCurrentCustomer()
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Vui lòng đăng nhập để đánh giá' }, { status: 401 })
   }
 
-  const { productId, rating, comment } = await request.json()
+  const body = await request.json()
+  const { productId, rating, comment } = body
 
-  // Check if user bought this product
-  const order = await prisma.order.findFirst({
+  if (!productId || !rating || rating < 1 || rating > 5) {
+    return NextResponse.json({ error: 'Thông tin không hợp lệ' }, { status: 400 })
+  }
+
+  // Check if user purchased this product
+  const hasPurchased = await prisma.order.findFirst({
     where: {
       userId: user.id,
-      items: { some: { productId } },
       status: 'SUCCESS',
-    },
+      items: {
+        some: { productId }
+      }
+    }
   })
 
-  if (!order) {
-    return NextResponse.json({ error: 'Must buy product to review' }, { status: 403 })
+  if (!hasPurchased) {
+    return NextResponse.json({ 
+      error: 'Bạn cần mua sản phẩm này trước khi đánh giá' 
+    }, { status: 403 })
   }
 
+  // Check if user already reviewed
+  const existingReview = await prisma.review.findFirst({
+    where: { productId, userId: user.id }
+  })
+
+  if (existingReview) {
+    // Update existing review
+    const updated = await prisma.review.update({
+      where: { id: existingReview.id },
+      data: { rating, comment: comment || '' },
+      include: { user: { select: { name: true } } }
+    })
+    return NextResponse.json({ review: updated })
+  }
+
+  // Create new review
   const review = await prisma.review.create({
     data: {
       productId,
       userId: user.id,
       rating,
-      comment,
+      comment: comment || '',
     },
+    include: { user: { select: { name: true } } }
   })
 
-  return NextResponse.json(review)
+  return NextResponse.json({ review })
 }

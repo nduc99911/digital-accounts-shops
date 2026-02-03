@@ -8,8 +8,10 @@ import BuyNowButton from './BuyNowButton'
 import SiteHeader from '@/app/_ui/SiteHeader'
 import ProductCard from '@/app/_ui/ProductCard'
 import RecentlyViewed from '@/app/_ui/RecentlyViewed'
+import ProductReviews from '@/app/_ui/ProductReviews'
 import TrackProductView from './TrackProductView'
 import { generateProductMetadata } from '@/lib/metadata'
+import { getCurrentCustomer } from '@/lib/customerAuth'
 
 export async function generateMetadata({
   params,
@@ -48,6 +50,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params
   const p = await prisma.product.findUnique({ where: { slug }, include: { category: true } })
   if (!p || !p.active) notFound()
+  
+  const user = await getCurrentCustomer()
+  const isLoggedIn = !!user
 
   const related = await prisma.product.findMany({
     where: {
@@ -167,6 +172,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <div className="prose prose-slate mt-4 max-w-none whitespace-pre-wrap dark:prose-invert">{p.description}</div>
           ) : (
             <div className="mt-3 text-sm text-slate-500 dark:text-slate-400">(Chưa có mô tả chi tiết)</div>
+          )}
+        </div>
+
+        {/* Reviews Section */}
+        <ProductReviews productId={p.id} isLoggedIn={isLoggedIn} />
           )}
         </div>
 
