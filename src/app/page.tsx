@@ -4,6 +4,7 @@ import { cache, cacheKeys } from '@/lib/cache'
 import ProductCard from './_ui/ProductCard'
 import SiteHeader from './_ui/SiteHeader'
 import FlashSale from './_ui/FlashSale'
+import FuturisticHero from './_ui/FuturisticHero'
 
 async function getHomepageData() {
   // Try cache first
@@ -155,158 +156,8 @@ export default async function Home() {
         .animate-fade-in-delay-3 { animation: fade-in-up 0.6s ease-out 0.3s forwards; opacity: 0; }
       `}} />
 
-      {/* Hero Banner - Animated gradient */}
-          <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
-            {/* Main banner */}
-            <div 
-              className="animate-fade-in relative overflow-hidden rounded-3xl p-8 text-white shadow-2xl"
-              style={{
-                background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 25%, #0891b2 50%, #7c3aed 75%, #c026d3 100%)',
-                backgroundSize: '400% 400%',
-                animation: 'hero-gradient 12s ease infinite, fade-in-up 0.6s ease-out',
-                boxShadow: '0 25px 50px -12px rgba(124, 58, 237, 0.35)',
-              }}
-            >
-              {/* Animated background blobs */}
-              <div 
-                className="absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-30"
-                style={{
-                  background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)',
-                  animation: 'float-slow 8s ease-in-out infinite',
-                }}
-              />
-              <div 
-                className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full opacity-20"
-                style={{
-                  background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                  animation: 'float 10s ease-in-out infinite reverse',
-                }}
-              />
-              <div 
-                className="absolute right-1/3 top-1/2 h-32 w-32 rounded-full opacity-20"
-                style={{
-                  background: 'radial-gradient(circle, rgba(251, 191, 36, 0.5) 0%, transparent 70%)',
-                  animation: 'float 6s ease-in-out infinite 1s',
-                }}
-              />
-              
-              {/* Grid pattern overlay */}
-              <div 
-                className="absolute inset-0 opacity-10"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                }}
-              />
-              
-              <div className="relative z-10">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold backdrop-blur-sm">
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                  Đang hoạt động
-                </div>
-                
-                <h1 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-                  Tài khoản số{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-200">
-                    Premium
-                  </span>
-                </h1>
-                
-                <p className="mt-3 max-w-lg text-base font-medium text-white/90">
-                  Giá tốt nhất • Dùng ngay • Bảo hành đầy đủ
-                </p>
-                
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm ring-1 ring-white/20 transition-all hover:bg-white/20">
-                    <svg className="h-4 w-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    Netflix
-                  </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm ring-1 ring-white/20 transition-all hover:bg-white/20">
-                    <svg className="h-4 w-4 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    Spotify
-                  </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm ring-1 ring-white/20 transition-all hover:bg-white/20">
-                    <svg className="h-4 w-4 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    ChatGPT
-                  </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm ring-1 ring-white/20 transition-all hover:bg-white/20">
-                    <svg className="h-4 w-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    Canva
-                  </span>
-                </div>
-                
-                {/* Promo badges */}
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <span className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-amber-500/30">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
-                    </svg>
-                    Giảm đến 70%
-                  </span>
-                  <span className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-500 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-emerald-500/30">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Giao tự động
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Side cards */}
-            <div className="grid gap-4">
-              <div 
-                className="relative overflow-hidden rounded-2xl p-5"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.05))',
-                  border: '1px solid rgba(139, 92, 246, 0.15)',
-                }}
-              >
-                <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-violet-500/10 blur-2xl" />
-                <div className="relative">
-                  <div className="flex items-center gap-2 text-sm font-bold text-violet-700 dark:text-violet-300">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    Hỗ trợ 24/7
-                  </div>
-                  <p className="mt-2 text-xs font-medium text-slate-600 dark:text-slate-400">
-                    Xác nhận thanh toán & giao hàng nhanh chóng
-                  </p>
-                </div>
-              </div>
-              
-              <div 
-                className="relative overflow-hidden rounded-2xl p-5"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.05))',
-                  border: '1px solid rgba(6, 182, 212, 0.15)',
-                }}
-              >
-                <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-cyan-500/10 blur-2xl" />
-                <div className="relative">
-                  <div className="flex items-center gap-2 text-sm font-bold text-cyan-700 dark:text-cyan-300">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                    </svg>
-                    Ưu đãi đặc biệt
-                  </div>
-                  <p className="mt-2 text-xs font-medium text-slate-600 dark:text-slate-400">
-                    Giảm giá theo combo / mua nhiều giảm thêm
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Flash Sale */}
+      {/* Futuristic Hero Banner */}
+          <FuturisticHero />
           {discountedFlashProducts.length > 0 && (
             <FlashSale
               products={discountedFlashProducts.map((p) => ({
