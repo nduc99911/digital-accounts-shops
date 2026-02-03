@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { setAuthCookie, verifyPassword } from '@/lib/auth'
+import { setAuthCookie, verifyPassword } from '@/lib/adminAuth'
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}))

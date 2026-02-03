@@ -2,7 +2,23 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { rateLimitCheck } from '@/lib/rate-limit'
 
+// Admin routes that require authentication
+const ADMIN_PROTECTED_ROUTES = ['/admin/dashboard', '/admin/orders', '/admin/products', '/admin/categories', '/admin/settings', '/admin/coupons', '/admin/blog']
+const ADMIN_AUTH_COOKIE = 'admin_auth'
+const ADMIN_TOKEN = 'admin_token_secure_2024'
+
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Check admin authentication for protected admin routes
+  if (ADMIN_PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
+    const adminToken = request.cookies.get(ADMIN_AUTH_COOKIE)?.value
+    if (adminToken !== ADMIN_TOKEN) {
+      // Redirect to login if not authenticated
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+  }
+
   // Rate limiting
   const rateLimit = rateLimitCheck(request)
   if (rateLimit && !rateLimit.success) {
