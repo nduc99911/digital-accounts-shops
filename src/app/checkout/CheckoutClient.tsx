@@ -36,7 +36,7 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   )
 }
 
-export default function CheckoutClient() {
+export default function CheckoutClient({ couponCode }: { couponCode?: string }) {
   const [items, setItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -97,6 +97,7 @@ export default function CheckoutClient() {
           email,
           note,
           items,
+          couponCode,
         }),
       })
 

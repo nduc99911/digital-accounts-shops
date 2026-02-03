@@ -50,7 +50,35 @@ export async function POST(req: Request) {
     }
   }
 
-  const totalVnd = orderItems.reduce((sum, it) => sum + it.unitVnd * it.qty, 0)
+  let totalVnd = orderItems.reduce((sum, it) => sum + it.unitVnd * it.qty, 0)
+  let discountAmount = 0
+  let couponCode: string | null = null
+
+  // Validate coupon if provided
+  if (body.couponCode) {
+    const coupon = await prisma.coupon.findUnique({
+      where: { code: String(body.couponCode).toUpperCase() },
+    })
+
+    if (coupon && coupon.active && (!coupon.expiresAt || coupon.expiresAt > new Date()) && coupon.usedCount < coupon.usageLimit && totalVnd >= coupon.minOrder) {
+      discountAmount = coupon.type === 'PERCENT' 
+        ? Math.floor(totalVnd * (coupon.discount / 100))
+        : coupon.discount
+      
+      if (coupon.maxDiscount && discountAmount > coupon.maxDiscount) {
+        discountAmount = coupon.maxDiscount
+      }
+
+      couponCode = coupon.code
+      totalVnd = Math.max(0, totalVnd - discountAmount)
+
+      // Increment coupon used count
+      await prisma.coupon.update({
+        where: { id: coupon.id },
+        data: { usedCount: { increment: 1 } },
+      })
+    }
+  }
 
   // make unique-ish code (retry on collision)
   let code = makeOrderCode()
@@ -70,7 +98,7 @@ export async function POST(req: Request) {
       phone: body.phone ? String(body.phone).trim() : null,
       zalo: body.zalo ? String(body.zalo).trim() : null,
       email: body.email ? String(body.email).trim() : null,
-      note: body.note ? String(body.note).trim() : null,
+      note: body.note ? String(body.note).trim() : (couponCode ? `Coupon: ${couponCode} (-${discountAmount})` : null),
       totalVnd,
       status: 'PENDING_PAYMENT',
       items: {

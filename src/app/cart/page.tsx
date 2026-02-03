@@ -204,6 +204,46 @@ function EmptyCart() {
 
 // Summary card component
 function OrderSummary({ total, itemCount }: { total: number; itemCount: number }) {
+  const [couponCode, setCouponCode] = useState('')
+  const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null)
+  const [validating, setValidating] = useState(false)
+  const [couponError, setCouponError] = useState('')
+  const { showToast } = useToast()
+
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) return
+    setValidating(true)
+    setCouponError('')
+    
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ code: couponCode, orderTotal: total }),
+      })
+      
+      const data = await res.json()
+      if (res.ok) {
+        setCoupon({ code: data.code, discount: data.discount })
+        showToast(`Áp dụng mã ${data.code} thành công!`, 'success')
+      } else {
+        setCouponError(data.error || 'Mã không hợp lệ')
+      }
+    } catch {
+      setCouponError('Có lỗi xảy ra')
+    } finally {
+      setValidating(false)
+    }
+  }
+
+  const removeCoupon = () => {
+    setCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }
+
+  const finalTotal = coupon ? Math.max(0, total - coupon.discount) : total
+
   return (
     <div className="sticky top-24 animate-fade-in-up" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
       <div className="overflow-hidden rounded-3xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-xl shadow-slate-200/50 dark:bg-slate-900/80 dark:border-white/10 dark:shadow-black/20">
@@ -231,11 +271,53 @@ function OrderSummary({ total, itemCount }: { total: number; itemCount: number }
               <span className="font-medium text-emerald-600 dark:text-emerald-400">Miễn phí</span>
             </div>
 
+            {/* Coupon Input */}
+            <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">🎫 Mã giảm giá</label>
+              
+              {coupon ? (
+                <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 dark:bg-emerald-900/20">
+                  <div>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400">{coupon.code}</span>
+                    <span className="ml-2 text-sm text-emerald-600">- {formatVnd(coupon.discount)}</span>
+                  </div>
+                  <button onClick={removeCoupon} className="text-rose-500 hover:text-rose-600">✕</button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Nhập mã (VD: SALE50)"
+                    className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm uppercase text-slate-700 focus:border-violet-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                    onKeyDown={(e) => e.key === 'Enter' && validateCoupon()}
+                  />
+                  <button
+                    onClick={validateCoupon}
+                    disabled={validating || !couponCode.trim()}
+                    className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500 disabled:opacity-50"
+                  >
+                    {validating ? '...' : 'Áp dụng'}
+                  </button>
+                </div>
+              )}
+              {couponError && (
+                <p className="mt-2 text-xs text-rose-500">{couponError}</p>
+              )}
+            </div>
+
             <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+              {coupon && (
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-emerald-600 dark:text-emerald-400">Giảm giá</span>
+                  <span className="font-medium text-emerald-600 dark:text-emerald-400">- {formatVnd(coupon.discount)}</span>
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <span className="text-slate-600 dark:text-slate-400">Tổng cộng</span>
                 <span className="text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                  <AnimatedPrice value={total} />
+                  <AnimatedPrice value={finalTotal} />
                 </span>
               </div>
               <p className="mt-1 text-right text-xs text-slate-400 dark:text-slate-500">
@@ -246,7 +328,7 @@ function OrderSummary({ total, itemCount }: { total: number; itemCount: number }
 
           {/* Checkout button */}
           <Link
-            href="/checkout"
+            href={coupon ? `/checkout?coupon=${coupon.code}` : '/checkout'}
             className="mt-6 btn-gradient-emerald btn-gradient flex w-full items-center justify-center gap-2 group"
           >
             <span>Tiến hành thanh toán</span>
