@@ -134,8 +134,8 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Social Login */}
-            <div className="mt-6">
+            {/* Social Login - Disabled (requires OAuth setup) */}
+            {/* <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200 dark:border-slate-700" />
@@ -145,7 +145,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <SocialLoginButtons />
-            </div>
+            </div> */}
 
             <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
               Chưa có tài khoản?{' '}
