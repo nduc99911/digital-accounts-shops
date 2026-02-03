@@ -9,6 +9,7 @@ import SiteHeader from '@/app/_ui/SiteHeader'
 import ProductCard from '@/app/_ui/ProductCard'
 import RecentlyViewed from '@/app/_ui/RecentlyViewed'
 import ProductReviews from '@/app/_ui/ProductReviews'
+import ProductImageGallery from '@/app/_ui/ProductImageGallery'
 import TrackProductView from './TrackProductView'
 import { generateProductMetadata } from '@/lib/metadata'
 import { getCurrentCustomer } from '@/lib/customerAuth'
@@ -48,7 +49,15 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const p = await prisma.product.findUnique({ where: { slug }, include: { category: true } })
+  const p = await prisma.product.findUnique({ 
+    where: { slug }, 
+    include: { 
+      category: true,
+      images: {
+        orderBy: { sortOrder: 'asc' }
+      }
+    } 
+  })
   if (!p || !p.active) notFound()
   
   const user = await getCurrentCustomer()
@@ -94,17 +103,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         {/* Top section: image + buy box */}
         <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
-          <div className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-            <div className="aspect-[16/10] w-full bg-slate-100 dark:bg-slate-900">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.imageUrl || 'https://picsum.photos/seed/' + p.slug + '/1200/800'}
-                alt={p.name}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-          </div>
+          <ProductImageGallery 
+            mainImage={p.imageUrl}
+            images={p.images}
+            productName={p.name}
+          />
 
           <div className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
             <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">{p.name}</h1>
