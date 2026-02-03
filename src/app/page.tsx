@@ -5,6 +5,7 @@ import ProductCard from './_ui/ProductCard'
 import SiteHeader from './_ui/SiteHeader'
 import FlashSale from './_ui/FlashSale'
 import FuturisticHero from './_ui/FuturisticHero'
+import FeaturedCategories from './_ui/FeaturedCategories'
 
 async function getHomepageData() {
   // Try cache first
@@ -158,6 +159,10 @@ export default async function Home() {
 
       {/* Futuristic Hero Banner */}
           <FuturisticHero />
+
+          {/* Featured Categories */}
+          <FeaturedCategories categories={categories} />
+          
           {discountedFlashProducts.length > 0 && (
             <FlashSale
               products={discountedFlashProducts.map((p) => ({
