@@ -18,7 +18,7 @@ export async function generateMetadata({
   return genMeta({
     title: q ? `Kết quả tìm kiếm: ${q}` : 'Tìm kiếm sản phẩm',
     description: q 
-      ? `Tìm kiếm "${q}" - Khám phá hàng trăm tài khoản premium giá tốt tại Premium Digital Store.`
+      ? `Tìm kiếm "${q}" - Khám phá hàng trăm tài khoản premium giá tốt tại taikhoanso.com.`
       : 'Tìm kiếm Netflix, Spotify, ChatGPT, Canva và hơn 100+ dịch vụ premium. Giá tốt nhất, giao hàng tự động.',
     path: '/search',
   })

@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
 
-export const alt = 'Premium Digital Store - Tài khoản số chính hãng'
+export const alt = 'taikhoanso.com - Tài khoản số chính hãng'
 export const size = {
   width: 1200,
   height: 630,
@@ -82,7 +82,7 @@ export default async function Image() {
               textShadow: '0 4px 30px rgba(0, 0, 0, 0.3)',
             }}
           >
-            Premium Digital Store
+            taikhoanso.com
           </h1>
 
           {/* Subtitle */}

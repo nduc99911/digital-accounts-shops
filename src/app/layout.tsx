@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com'
-const siteName = process.env.NEXT_PUBLIC_SHOP_NAME || 'Premium Digital Store'
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://taikhoanso.com'
+const siteName = process.env.NEXT_PUBLIC_SHOP_NAME || 'taikhoanso.com'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
