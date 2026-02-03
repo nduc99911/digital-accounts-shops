@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import NotificationBell from '@/app/_ui/NotificationBell'
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -6,11 +7,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div className="mx-auto max-w-5xl p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-semibold tracking-tight text-white">Admin</h1>
-          <form action="/api/admin/logout" method="post">
-            <button className="rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/15">
-              Logout
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            <NotificationBell />
+            <form action="/api/admin/logout" method="post">
+              <button className="rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/15">
+                Logout
+              </button>
+            </form>
+          </div>
         </div>
         {children}
       </div>

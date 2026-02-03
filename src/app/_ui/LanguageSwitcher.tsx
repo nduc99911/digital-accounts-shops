@@ -1,27 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useI18n } from './i18n'
 
 export default function LanguageSwitcher() {
-  const [locale, setLocale] = useState<'vi' | 'en'>('vi')
-
-  useEffect(() => {
-    const saved = localStorage.getItem('locale') as 'vi' | 'en'
-    if (saved) setLocale(saved)
-  }, [])
-
-  const switchLang = (newLocale: 'vi' | 'en') => {
-    setLocale(newLocale)
-    localStorage.setItem('locale', newLocale)
-    window.location.reload()
-  }
+  const { lang, setLang } = useI18n()
 
   return (
     <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
       <button
-        onClick={() => switchLang('vi')}
+        onClick={() => setLang('vi')}
         className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-all ${
-          locale === 'vi'
+          lang === 'vi'
             ? 'bg-white text-violet-600 shadow-sm dark:bg-slate-700'
             : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
         }`}
@@ -29,9 +18,9 @@ export default function LanguageSwitcher() {
         🇻🇳 VI
       </button>
       <button
-        onClick={() => switchLang('en')}
+        onClick={() => setLang('en')}
         className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-all ${
-          locale === 'en'
+          lang === 'en'
             ? 'bg-white text-violet-600 shadow-sm dark:bg-slate-700'
             : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'
         }`}
