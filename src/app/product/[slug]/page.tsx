@@ -177,8 +177,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         {/* Reviews Section */}
         <ProductReviews productId={p.id} isLoggedIn={isLoggedIn} />
-          )}
-        </div>
 
         {/* Related */}
         {related.length > 0 ? (
