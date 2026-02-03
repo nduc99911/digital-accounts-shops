@@ -108,16 +108,19 @@ export default function CheckoutClient() {
     'rounded-md bg-white px-3 py-2 text-sm text-slate-900 ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600 ' +
     'dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:focus:ring-blue-500'
 
+  // Auto-generated transfer content
+  const transferContent = order ? `Thanh toan don ${order.code}` : ''
+
   if (order) {
     return (
       <main className="mx-auto grid max-w-4xl gap-4 p-4">
-        <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
+        <div className="rounded-lg bg-gradient-to-r from-emerald-50 to-teal-50 p-4 shadow-sm ring-1 ring-emerald-200 dark:from-emerald-950/30 dark:to-teal-950/30 dark:ring-emerald-800">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <div className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Đặt hàng thành công</div>
-              <div className="mt-1 text-sm text-slate-600 dark:text-slate-300">Vui lòng chuyển khoản để shop xác nhận.</div>
+              <div className="text-lg font-extrabold text-emerald-900 dark:text-emerald-100">🎉 Đặt hàng thành công</div>
+              <div className="mt-1 text-sm text-emerald-700 dark:text-emerald-300">Vui lòng chuyển khoản theo thông tin bên dưới.</div>
             </div>
-            <Link href="/" className="text-sm font-semibold text-blue-700 hover:underline dark:text-blue-300">
+            <Link href="/" className="text-sm font-semibold text-emerald-700 hover:underline dark:text-emerald-300">
               Về trang chủ
             </Link>
           </div>
@@ -125,14 +128,72 @@ export default function CheckoutClient() {
 
         <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
           <div className="text-sm text-slate-600 dark:text-slate-300">Mã đơn của bạn:</div>
-          <div className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{order.code}</div>
+          <div className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">{order.code}</div>
           <div className="mt-4 text-sm text-slate-600 dark:text-slate-300">
-            Trạng thái hiện tại: <span className="font-semibold text-amber-700 dark:text-amber-400">Chờ thanh toán</span>
-          </div>
-          <div className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            Gợi ý: chuyển khoản theo thông tin/QR trên trang (sẽ được thêm ở bước Payment Settings trong Admin).
+            Trạng thái: <span className="font-semibold text-amber-700 dark:text-amber-400">⏳ Chờ thanh toán</span>
           </div>
         </div>
+
+        {/* Payment Info */}
+        {payment && payment.active && (
+          <div className="rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm ring-1 ring-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:ring-blue-800">
+            <div className="mb-4 text-lg font-bold text-blue-900 dark:text-blue-100">💳 Thông tin chuyển khoản</div>
+            
+            <div className="grid gap-4 md:grid-cols-2">
+              {/* QR Code */}
+              {payment.qrImageUrl ? (
+                <div className="flex flex-col items-center">
+                  <img
+                    src={payment.qrImageUrl}
+                    alt="QR Code"
+                    className="w-full max-w-[200px] rounded-lg border-2 border-white shadow-md"
+                  />
+                  <p className="mt-2 text-xs text-blue-600 dark:text-blue-400">Quét mã để chuyển khoản</p>
+                </div>
+              ) : null}
+
+              {/* Bank Details */}
+              <div className="space-y-3">
+                <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">Ngân hàng</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{payment.bankName}</span>
+                    <CopyButton text={payment.bankName} label="Copy" />
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">Số tài khoản</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{payment.accountNumber}</span>
+                    <CopyButton text={payment.accountNumber} label="Copy" />
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">Chủ tài khoản</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{payment.accountName}</span>
+                    <CopyButton text={payment.accountName} label="Copy" />
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-amber-50 p-3 ring-1 ring-amber-200 dark:bg-amber-950/30 dark:ring-amber-800">
+                  <div className="text-xs text-amber-600 dark:text-amber-400">Nội dung chuyển khoản (BẮT BUỘC)</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-amber-700 dark:text-amber-300">{transferContent}</span>
+                    <CopyButton text={transferContent} label="Copy" />
+                  </div>
+                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">⚠️ Ghi đúng nội dung này để được xử lý tự động</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">
+              ✅ Sau khi chuyển khoản, hệ thống sẽ tự động xác nhận trong vòng 1-2 phút.
+            </div>
+          </div>
+        )}
       </main>
     )
   }
@@ -267,7 +328,7 @@ export default function CheckoutClient() {
                     </div>
                     <div className="flex items-center">
                       <span className="text-slate-500 dark:text-slate-400">Nội dung CK:</span>
-                      <span className="ml-1 font-bold text-rose-600 dark:text-rose-400">{order ? `Thanh toan don ${order.code}` : 'Mã đơn hàng'}</span>
+                      <span className="ml-1 font-bold text-rose-600 dark:text-rose-400">{order ? `Thanh toan don ${order.code}` : '(Tự động sau khi tạo đơn)'}</span>
                       {order && <CopyButton text={`Thanh toan don ${order.code}`} label="Copy" />}
                     </div>
                   </div>
