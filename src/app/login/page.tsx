@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { generateMetadata as genMeta } from '@/lib/metadata'
+import SocialLoginButtons from './SocialLoginButtons'
 
 export const metadata: Metadata = genMeta({
   title: 'Đăng nhập',
@@ -132,6 +133,19 @@ export default function LoginPage() {
                 Đăng nhập
               </button>
             </form>
+
+            {/* Social Login */}
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200 dark:border-slate-700" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="bg-white px-2 text-slate-500 dark:bg-slate-900 dark:text-slate-400">Hoặc đăng nhập với</span>
+                </div>
+              </div>
+              <SocialLoginButtons />
+            </div>
 
             <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
               Chưa có tài khoản?{' '}
