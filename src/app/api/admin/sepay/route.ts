@@ -12,9 +12,12 @@ export async function GET() {
     where: { active: true },
   })
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+  
   return NextResponse.json({
     enabled: !!process.env.SEPAY_SECRET,
-    webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/sepay`,
+    webhookUrl: `${baseUrl}/api/webhooks/sepay`,
     bankAccount: setting?.accountNumber || '',
     bankName: setting?.bankName || '',
   })
