@@ -61,7 +61,11 @@ export default function ProductCard({
   return (
     <Link
       href={`/product/${p.slug}`}
-      className="group relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm border border-white/50 shadow-lg shadow-slate-200/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-violet-500/20 dark:bg-slate-900/80 dark:border-white/10 dark:shadow-black/20 dark:hover:shadow-violet-500/20"
+      className="group relative overflow-hidden rounded-2xl transition-all duration-500 hover:-translate-y-2"
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.1)',
+      }}
     >
       {/* Glow effect on hover */}
       <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-gradient-to-br from-violet-500/10 via-fuchsia-500/10 to-transparent pointer-events-none" />
