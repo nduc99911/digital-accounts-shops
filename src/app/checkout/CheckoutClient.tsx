@@ -2,19 +2,20 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { ArrowLeft, CheckCircle, Copy, CreditCard, Loader2, ShoppingBag, Zap } from 'lucide-react'
 import { cartTotal, clearCart, readCart, type CartItem } from '@/lib/cart'
 import { formatVnd } from '@/lib/shop'
+import SiteHeader from '@/app/_ui/SiteHeader'
 
 function CopyButton({ text, label }: { text: string; label: string }) {
   const [copied, setCopied] = useState(false)
-  
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Fallback for browsers that don't support clipboard API
       const textarea = document.createElement('textarea')
       textarea.value = text
       document.body.appendChild(textarea)
@@ -29,9 +30,14 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="ml-2 inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+      className={`ml-2 inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+        copied
+          ? 'bg-emerald-500/20 text-emerald-400'
+          : 'bg-white/10 text-slate-400 hover:bg-white/20 hover:text-white'
+      }`}
     >
-      {copied ? '✓ Đã copy' : label}
+      <Copy className="w-3 h-3" />
+      {copied ? 'Đã copy' : label}
     </button>
   )
 }
@@ -106,259 +112,294 @@ export default function CheckoutClient({ couponCode }: { couponCode?: string }) 
   }
 
   const inputClass =
-    'rounded-md bg-white px-3 py-2 text-sm text-slate-900 ring-1 ring-slate-200 outline-none focus:ring-2 focus:ring-blue-600 ' +
-    'dark:bg-slate-900 dark:text-slate-100 dark:ring-white/10 dark:focus:ring-blue-500'
+    'w-full px-4 py-3 rounded-xl text-white placeholder-slate-500 outline-none transition-all focus:ring-2 focus:ring-violet-500/50'
 
-  // Auto-generated transfer content
   const transferContent = order ? `Thanh toan don ${order.code}` : ''
 
   if (order) {
     return (
-      <main className="mx-auto grid max-w-4xl gap-4 p-4">
-        <div className="rounded-lg bg-gradient-to-r from-emerald-50 to-teal-50 p-4 shadow-sm ring-1 ring-emerald-200 dark:from-emerald-950/30 dark:to-teal-950/30 dark:ring-emerald-800">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div className="text-lg font-extrabold text-emerald-900 dark:text-emerald-100">🎉 Đặt hàng thành công</div>
-              <div className="mt-1 text-sm text-emerald-700 dark:text-emerald-300">Vui lòng chuyển khoản theo thông tin bên dưới.</div>
+      <div className="min-h-screen bg-slate-950">
+        <SiteHeader />
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Success Header */}
+          <div className="text-center mb-10">
+            <div
+              className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
+              style={{ background: 'rgba(16, 185, 129, 0.1)' }}
+            >
+              <CheckCircle className="w-10 h-10 text-emerald-400" />
             </div>
-            <Link href="/" className="text-sm font-semibold text-emerald-700 hover:underline dark:text-emerald-300">
-              Về trang chủ
-            </Link>
+            <h1 className="text-3xl font-bold text-white mb-2">Đặt hàng thành công!</h1>
+            <p className="text-slate-400">Vui lòng chuyển khoản để hoàn tất đơn hàng</p>
           </div>
-        </div>
 
-        <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-          <div className="text-sm text-slate-600 dark:text-slate-300">Mã đơn của bạn:</div>
-          <div className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">{order.code}</div>
-          <div className="mt-4 text-sm text-slate-600 dark:text-slate-300">
-            Trạng thái: <span className="font-semibold text-amber-700 dark:text-amber-400">⏳ Chờ thanh toán</span>
+          {/* Order Code */}
+          <div
+            className="p-6 rounded-2xl mb-6"
+            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}
+          >
+            <p className="text-slate-400 mb-2">Mã đơn hàng</p>
+            <div className="flex items-center justify-between">
+              <span className="text-3xl font-bold text-white">{order.code}</span>
+              <span className="px-3 py-1 rounded-full text-sm font-medium text-amber-400 bg-amber-400/10">
+                Chờ thanh toán
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Payment Info */}
-        {payment && payment.active && (
-          <div className="rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-sm ring-1 ring-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:ring-blue-800">
-            <div className="mb-4 text-lg font-bold text-blue-900 dark:text-blue-100">💳 Thông tin chuyển khoản</div>
-            
-            <div className="grid gap-4 md:grid-cols-2">
-              {/* QR Code from Admin */}
-              <div className="flex flex-col items-center">
-                {payment.qrImageUrl ? (
-                  <>
-                    <img
-                      src={payment.qrImageUrl}
-                      alt="QR Code"
-                      className="w-full max-w-[250px] rounded-lg border-2 border-white shadow-md"
-                    />
-                    <p className="mt-2 text-xs text-blue-600 dark:text-blue-400">Quét mã để chuyển khoản</p>
-                  </>
-                ) : (
-                  <div className="flex h-[200px] w-[200px] items-center justify-center rounded-lg bg-white/50 text-sm text-slate-500 dark:bg-slate-900/50">
-                    Chưa có QR
+          {/* Payment Info */}
+          {payment && payment.active && (
+            <div
+              className="p-6 rounded-2xl mb-6"
+              style={{ background: 'rgba(139, 92, 246, 0.05)', border: '1px solid rgba(139, 92, 246, 0.2)' }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <CreditCard className="w-6 h-6 text-violet-400" />
+                <h2 className="text-xl font-bold text-white">Thông tin chuyển khoản</h2>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* QR Code */}
+                {payment.qrImageUrl && (
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="p-4 rounded-xl mb-4"
+                      style={{ background: 'rgba(255,255,255,0.05)' }}
+                    >
+                      <img
+                        src={payment.qrImageUrl}
+                        alt="QR Code"
+                        className="w-48 h-48 object-contain rounded-lg"
+                      />
+                    </div>
+                    <p className="text-sm text-slate-400">Quét mã để thanh toán</p>
                   </div>
                 )}
-              </div>
 
-              {/* Bank Details */}
-              <div className="space-y-3">
-                <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
-                  <div className="text-xs text-slate-500 dark:text-slate-400">Ngân hàng</div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">{payment.bankName}</span>
-                    <CopyButton text={payment.bankName} label="Copy" />
+                {/* Bank Details */}
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-slate-400 mb-1">Ngân hàng</p>
+                    <div className="flex items-center">
+                      <span className="text-lg font-semibold text-white">{payment.bankName}</span>
+                      <CopyButton text={payment.bankName} label="Copy" />
+                    </div>
                   </div>
-                </div>
 
-                <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
-                  <div className="text-xs text-slate-500 dark:text-slate-400">Số tài khoản</div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{payment.accountNumber}</span>
-                    <CopyButton text={payment.accountNumber} label="Copy" />
+                  <div>
+                    <p className="text-sm text-slate-400 mb-1">Số tài khoản</p>
+                    <div className="flex items-center">
+                      <span className="text-lg font-mono text-white">{payment.accountNumber}</span>
+                      <CopyButton text={payment.accountNumber} label="Copy" />
+                    </div>
                   </div>
-                </div>
 
-                <div className="rounded-lg bg-white/70 p-3 dark:bg-slate-900/50">
-                  <div className="text-xs text-slate-500 dark:text-slate-400">Chủ tài khoản</div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">{payment.accountName}</span>
-                    <CopyButton text={payment.accountName} label="Copy" />
+                  <div>
+                    <p className="text-sm text-slate-400 mb-1">Chủ tài khoản</p>
+                    <span className="text-lg text-white">{payment.accountName}</span>
                   </div>
-                </div>
 
-                <div className="rounded-lg bg-emerald-50 p-3 ring-1 ring-emerald-200 dark:bg-emerald-950/30 dark:ring-emerald-800">
-                  <div className="text-xs text-emerald-600 dark:text-emerald-400">Số tiền</div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">{formatVnd(order.totalVnd)}</span>
-                    <CopyButton text={String(order.totalVnd)} label="Copy" />
+                  <div>
+                    <p className="text-sm text-slate-400 mb-1">Số tiền</p>
+                    <div className="flex items-center">
+                      <span className="text-2xl font-bold text-white">{formatVnd(order.totalVnd)}</span>
+                      <CopyButton text={String(order.totalVnd)} label="Copy" />
+                    </div>
                   </div>
-                </div>
 
-                <div className="rounded-lg bg-amber-50 p-3 ring-1 ring-amber-200 dark:bg-amber-950/30 dark:ring-amber-800">
-                  <div className="text-xs text-amber-600 dark:text-amber-400">Nội dung CK (BẮT BUỘC)</div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-amber-700 dark:text-amber-300">{transferContent}</span>
-                    <CopyButton text={transferContent} label="Copy" />
+                  <div>
+                    <p className="text-sm text-slate-400 mb-1">Nội dung CK</p>
+                    <div className="flex items-center">
+                      <span className="text-lg font-mono text-violet-400">{transferContent}</span>
+                      <CopyButton text={transferContent} label="Copy" />
+                    </div>
+                    <p className="text-xs text-amber-400 mt-1">* Vui lòng ghi đúng nội dung chuyển khoản</p>
                   </div>
-                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">⚠️ Ghi đúng nội dung để được xử lý tự động</p>
                 </div>
               </div>
             </div>
+          )}
 
-            <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">
-              ✅ Sau khi chuyển khoản, hệ thống sẽ tự động xác nhận trong vòng 1-2 phút.
-            </div>
+          {/* Actions */}
+          <div className="flex gap-4">
+            <Link
+              href="/account/orders"
+              className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-white transition-all"
+              style={{ background: 'rgba(255,255,255,0.1)' }}
+            >
+              Xem đơn hàng
+            </Link>
+            <Link
+              href="/"
+              className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-white transition-all hover:scale-[1.02]"
+              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 100%)' }}
+            >
+              <Zap className="w-5 h-5" />
+              Tiếp tục mua sắm
+            </Link>
           </div>
-        )}
-      </main>
+        </main>
+      </div>
     )
   }
 
   return (
-    <main className="mx-auto grid max-w-4xl gap-4 p-4">
-      <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Checkout</h1>
-          <Link href="/cart" className="text-sm font-semibold text-blue-700 hover:underline dark:text-blue-300">
-            ← Quay lại giỏ
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-950">
+      <SiteHeader />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back */}
+        <Link
+          href="/cart"
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Quay lại giỏ hàng
+        </Link>
 
-      {items.length === 0 ? (
-        <div className="rounded-lg bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-          <div className="font-medium text-slate-900 dark:text-slate-100">Giỏ hàng trống</div>
-          <Link
-            href="/"
-            className="mt-4 inline-block rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
-          >
-            Chọn sản phẩm
-          </Link>
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-            <div className="mb-3 font-semibold text-slate-900 dark:text-slate-100">Thông tin khách</div>
+        <div className="grid lg:grid-cols-[1fr_400px] gap-8">
+          {/* Left: Form */}
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-6">Thông tin thanh toán</h1>
 
-            <div className="grid gap-3">
-              <label className="grid gap-1">
-                <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Họ tên *</div>
-                <input className={inputClass} value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-              </label>
+            {error && (
+              <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                {error}
+              </div>
+            )}
 
-              <label className="grid gap-1">
-                <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">SĐT</div>
-                <input className={inputClass} value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </label>
+            <div
+              className="p-6 rounded-2xl space-y-4"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}
+            >
+              <div>
+                <label className="block text-sm text-slate-400 mb-2">Họ và tên *</label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className={inputClass}
+                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                  placeholder="Nguyễn Văn A"
+                />
+              </div>
 
-              <label className="grid gap-1">
-                <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Zalo</div>
-                <input className={inputClass} value={zalo} onChange={(e) => setZalo(e.target.value)} />
-              </label>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-slate-400 mb-2">Số điện thoại</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className={inputClass}
+                    style={{ background: 'rgba(255,255,255,0.05)' }}
+                    placeholder="0901234567"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-2">Zalo</label>
+                  <input
+                    type="text"
+                    value={zalo}
+                    onChange={(e) => setZalo(e.target.value)}
+                    className={inputClass}
+                    style={{ background: 'rgba(255,255,255,0.05)' }}
+                    placeholder="0901234567"
+                  />
+                </div>
+              </div>
 
-              <label className="grid gap-1">
-                <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Email</div>
-                <input className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} />
-              </label>
+              <div>
+                <label className="block text-sm text-slate-400 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={inputClass}
+                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                  placeholder="email@example.com"
+                />
+              </div>
 
-              <label className="grid gap-1">
-                <div className="text-xs font-semibold text-slate-600 dark:text-slate-300">Ghi chú</div>
-                <textarea className={inputClass} rows={3} value={note} onChange={(e) => setNote(e.target.value)} />
-              </label>
-
-              {error ? <div className="text-sm font-semibold text-rose-600 dark:text-rose-400">{error}</div> : null}
-
-              <button
-                disabled={loading}
-                onClick={submit}
-                className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-60"
-              >
-                {loading ? 'Đang tạo đơn...' : 'Tạo đơn hàng'}
-              </button>
-
-              <div className="text-xs text-slate-500 dark:text-slate-400">
-                Lưu ý: phần hiển thị QR/chuyển khoản sẽ lấy từ Admin (Payment Settings).
+              <div>
+                <label className="block text-sm text-slate-400 mb-2">Ghi chú</label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className={inputClass}
+                  style={{ background: 'rgba(255,255,255,0.05)', minHeight: '100px' }}
+                  placeholder="Ghi chú về đơn hàng (tùy chọn)"
+                  rows={3}
+                />
               </div>
             </div>
           </div>
 
-          <div className="grid gap-4">
-            <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-              <div className="mb-3 font-semibold text-slate-900 dark:text-slate-100">Tóm tắt</div>
-              <div className="grid gap-2 text-sm">
-                {items.map((it) => (
-                  <div key={it.productId} className="flex items-center justify-between">
-                    <div className="text-slate-700 dark:text-slate-200">
-                      {it.name} <span className="text-xs text-slate-500 dark:text-slate-400">x{it.qty}</span>
+          {/* Right: Summary */}
+          <div className="lg:sticky lg:top-24 h-fit">
+            <div
+              className="p-6 rounded-2xl"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}
+            >
+              <h2 className="text-xl font-bold text-white mb-6">Đơn hàng</h2>
+
+              {/* Items */}
+              <div className="space-y-4 mb-6">
+                {items.map((item) => (
+                  <div key={item.productId} className="flex items-center gap-4">
+                    <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center"
+                      style={{ background: 'rgba(139, 92, 246, 0.1)' }}
+                    >
+                      <ShoppingBag className="w-6 h-6 text-violet-400" />
                     </div>
-                    <div className="font-medium text-slate-900 dark:text-slate-100">{formatVnd(it.priceVnd * it.qty)}</div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-medium truncate">{item.name}</p>
+                      <p className="text-sm text-slate-400">x{item.qty}</p>
+                    </div>
+                    <span className="text-white">{formatVnd(item.priceVnd * item.qty)}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-3 dark:border-white/10">
-                <div className="text-sm text-slate-600 dark:text-slate-300">Tổng</div>
-                <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">{formatVnd(total)}</div>
+              {/* Total */}
+              <div
+                className="border-t pt-4 mb-6"
+                style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Tổng cộng</span>
+                  <span className="text-3xl font-bold text-white">{formatVnd(total)}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="rounded-lg bg-white p-4 shadow-sm ring-1 ring-slate-200 dark:bg-slate-950 dark:ring-white/10">
-              <div className="mb-3 font-semibold text-slate-900 dark:text-slate-100">Thanh toán chuyển khoản</div>
+              {/* Submit */}
+              <button
+                onClick={submit}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 100%)' }}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Đang xử lý...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-5 h-5" />
+                    Đặt hàng
+                  </>
+                )}
+              </button>
 
-              {payment === null ? (
-                <div className="text-sm text-slate-500 dark:text-slate-400">Đang tải thông tin thanh toán...</div>
-              ) : payment.active === false ? (
-                <div className="text-sm font-semibold text-amber-700 dark:text-amber-400">
-                  Chưa cấu hình thanh toán. Vui lòng liên hệ shop hoặc quay lại sau.
-                </div>
-              ) : (
-                <div className="grid gap-3">
-                  {payment.qrImageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={payment.qrImageUrl}
-                      alt="QR"
-                      className="w-full max-w-[320px] rounded-md border border-slate-200 dark:border-white/10"
-                    />
-                  ) : (
-                    <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 dark:border-white/10 dark:bg-slate-900 dark:text-slate-300">
-                      (Chưa có ảnh QR — admin có thể thêm link QR trong Admin → Thanh toán)
-                    </div>
-                  )}
-
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center">
-                      <span className="text-slate-500 dark:text-slate-400">Ngân hàng:</span>
-                      <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">{payment.bankName}</span>
-                      <CopyButton text={payment.bankName} label="Copy" />
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-slate-500 dark:text-slate-400">Số tài khoản:</span>
-                      <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">{payment.accountNumber}</span>
-                      <CopyButton text={payment.accountNumber} label="Copy" />
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-slate-500 dark:text-slate-400">Chủ tài khoản:</span>
-                      <span className="ml-1 font-medium text-slate-900 dark:text-slate-100">{payment.accountName}</span>
-                      <CopyButton text={payment.accountName} label="Copy" />
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-slate-500 dark:text-slate-400">Nội dung CK:</span>
-                      <span className="ml-1 font-bold text-rose-600 dark:text-rose-400">{order ? `Thanh toan don ${order.code}` : '(Tự động sau khi tạo đơn)'}</span>
-                      {order && <CopyButton text={`Thanh toan don ${order.code}`} label="Copy" />}
-                    </div>
-                  </div>
-
-                  {payment.note ? <div className="text-xs text-slate-500 dark:text-slate-400">Ghi chú: {payment.note}</div> : null}
-
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
-                    Sau khi chuyển khoản, đơn sẽ ở trạng thái <b>Chờ thanh toán</b>. Admin sẽ kiểm tra và chuyển sang <b>Thành công</b>.
-                  </div>
-                </div>
-              )}
+              {/* Trust */}
+              <div className="mt-6 text-center text-sm text-slate-500">
+                <p>🔒 Thanh toán an toàn • Bảo hành 100%</p>
+              </div>
             </div>
           </div>
         </div>
-      )}
-    </main>
+      </main>
+    </div>
   )
 }

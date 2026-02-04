@@ -97,7 +97,218 @@ export default function FilterSidebar({ categories, totalProducts }: FilterSideb
 
   return (
     <>
-      {/* Mobile Filter Button */}
+      {/* Mobile Filter Button & Sort */}
+      <div className="flex items-center gap-2 lg:hidden mb-4">
+        <button
+          onClick={() => setIsMobileOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-white"
+          style={{ background: 'rgba(255,255,255,0.05)' }}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          Lọc
+          {hasActiveFilters && (
+            <span className="ml-1 w-5 h-5 rounded-full bg-violet-500 text-xs flex items-center justify-center">
+              {(currentCat ? 1 : 0) + (currentMin ? 1 : 0)}
+            </span>
+          )}
+        </button>
+
+        {/* Sort Dropdown */}
+        <div className="relative flex-1">
+          <button
+            onClick={() => setIsSortOpen(!isSortOpen)}
+            className="w-full flex items-center justify-between gap-2 px-4 py-2 rounded-xl text-white"
+            style={{ background: 'rgba(255,255,255,0.05)' }}
+          >
+            <span className="flex items-center gap-2">
+              <ArrowUpDown className="h-4 w-4" />
+              {currentSortOption.label}
+            </span>
+            <ChevronDown className={`h-4 w-4 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isSortOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setIsSortOpen(false)} />
+              <div
+                className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl p-1 shadow-xl"
+                style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
+                {sortOptions.map((option) => {
+                  const Icon = option.icon
+                  const isActive = currentSort === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => handleSortChange(option.value)}
+                      className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                        isActive ? 'bg-violet-500/20 text-violet-400' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {option.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:block">
+        <div
+          className="rounded-2xl p-5 sticky top-24"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}
+        >
+          {/* Sort */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-white mb-3">Sắp xếp</h3>
+            <div className="space-y-1">
+              {sortOptions.map((option) => {
+                const Icon = option.icon
+                const isActive = currentSort === option.value
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSortChange(option.value)}
+                    className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                      isActive ? 'bg-violet-500/20 text-violet-400' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {option.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Categories */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-white mb-3">Danh mục</h3>
+            <div className="space-y-1">
+              <button
+                onClick={() => handleCategoryChange(null)}
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                  !currentCat ? 'bg-violet-500/20 text-violet-400' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                Tất cả
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat.slug}
+                  onClick={() => handleCategoryChange(cat.slug)}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                    currentCat === cat.slug ? 'bg-violet-500/20 text-violet-400' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-white mb-3">Khoảng giá</h3>
+            <div className="space-y-1">
+              {priceRanges.map((range) => {
+                const isActive = currentMin === String(range.min) && (range.max ? currentMax === String(range.max) : !currentMax)
+                return (
+                  <button
+                    key={range.label}
+                    onClick={() => handlePriceChange(String(range.min), range.max ? String(range.max) : null)}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                      isActive ? 'bg-violet-500/20 text-violet-400' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {range.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Clear */}
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="w-full py-2 text-sm text-rose-400 hover:text-rose-300 transition-colors"
+            >
+              Xóa bộ lọc
+            </button>
+          )}
+        </div>
+      </aside>
+
+      {/* Mobile Drawer */}
+      {isMobileOpen && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setIsMobileOpen(false)} />
+          <div
+            className="fixed left-0 top-0 z-50 h-full w-80 p-5 overflow-y-auto"
+            style={{ background: 'rgba(15, 23, 42, 0.98)' }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white">Bộ lọc</h3>
+              <button onClick={() => setIsMobileOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            {/* Categories */}
+            <div className="mb-6">
+              <h3 className="text-sm font-bold text-white mb-3">Danh mục</h3>
+              <div className="space-y-1">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.slug}
+                    onClick={() => handleCategoryChange(cat.slug)}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
+                      currentCat === cat.slug ? 'bg-violet-500/20 text-violet-400' : 'text-slate-400'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="mb-6">
+              <h3 className="text-sm font-bold text-white mb-3">Khoảng giá</h3>
+              <div className="space-y-1">
+                {priceRanges.map((range) => (
+                  <button
+                    key={range.label}
+                    onClick={() => handlePriceChange(String(range.min), range.max ? String(range.max) : null)}
+                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
+                      currentMin === String(range.min) && (range.max ? currentMax === String(range.max) : !currentMax)
+                        ? 'bg-violet-500/20 text-violet-400'
+                        : 'text-slate-400'
+                    }`}
+                  >
+                    {range.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsMobileOpen(false)}
+              className="w-full py-3 rounded-xl font-semibold text-white"
+              style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #c026d3 100%)' }}
+            >
+              Áp dụng ({totalProducts})
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  )
       <div className="flex items-center gap-2 lg:hidden">
         <button
           onClick={() => setIsMobileOpen(true)}

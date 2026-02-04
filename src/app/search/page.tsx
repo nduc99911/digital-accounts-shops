@@ -6,6 +6,7 @@ import FilterSidebar from './FilterSidebar'
 import Pagination from '@/app/_ui/Pagination'
 import SiteHeader from '@/app/_ui/SiteHeader'
 import { generateMetadata as genMeta } from '@/lib/metadata'
+import { Search } from 'lucide-react'
 
 export async function generateMetadata({
   searchParams,
@@ -16,10 +17,10 @@ export async function generateMetadata({
   const q = typeof sp.q === 'string' ? sp.q : ''
   
   return genMeta({
-    title: q ? `Kết quả tìm kiếm: ${q}` : 'Tìm kiếm sản phẩm',
+    title: q ? `Kết quả: ${q}` : 'Tìm kiếm',
     description: q 
-      ? `Tìm kiếm "${q}" - Khám phá hàng trăm tài khoản premium giá tốt tại taikhoanso.com.`
-      : 'Tìm kiếm Netflix, Spotify, ChatGPT, Canva và hơn 100+ dịch vụ premium. Giá tốt nhất, giao hàng tự động.',
+      ? `Tìm kiếm "${q}" - taikhoanso.com`
+      : 'Tìm kiếm Netflix, Spotify, ChatGPT, Canva...',
     path: '/search',
   })
 }
@@ -63,17 +64,10 @@ export default async function SearchPage({
           OR: [
             { name: { contains: q, mode: 'insensitive' as const } },
             { shortDesc: { contains: q, mode: 'insensitive' as const } },
-            { description: { contains: q, mode: 'insensitive' as const } },
           ],
         }
       : {}),
-    ...(cat
-      ? {
-          category: {
-            slug: cat,
-          },
-        }
-      : {}),
+    ...(cat ? { category: { slug: cat } } : {}),
     ...(min != null || max != null
       ? {
           salePriceVnd: {
@@ -86,11 +80,11 @@ export default async function SearchPage({
 
   const orderBy =
     sort === 'price_asc'
-      ? [{ salePriceVnd: 'asc' as const }, { createdAt: 'desc' as const }]
+      ? [{ salePriceVnd: 'asc' as const }]
       : sort === 'price_desc'
-        ? [{ salePriceVnd: 'desc' as const }, { createdAt: 'desc' as const }]
+        ? [{ salePriceVnd: 'desc' as const }]
         : sort === 'sold_desc'
-          ? [{ soldQty: 'desc' as const }, { createdAt: 'desc' as const }]
+          ? [{ soldQty: 'desc' as const }]
           : [{ createdAt: 'desc' as const }]
 
   const take = 12
@@ -98,82 +92,69 @@ export default async function SearchPage({
 
   const [total, products] = await Promise.all([
     prisma.product.count({ where }),
-    prisma.product.findMany({
-      where,
-      orderBy,
-      take,
-      skip,
-    }),
+    prisma.product.findMany({ where, orderBy, take, skip }),
   ])
 
   const totalPages = Math.max(1, Math.ceil(total / take))
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-950">
       <SiteHeader initialQuery={q} />
 
-      <main className="mx-auto grid max-w-7xl gap-4 p-4 lg:grid-cols-[280px_1fr]">
-        {/* Filter Sidebar */}
-        <FilterSidebar categories={categories} totalProducts={total} />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {q ? `Kết quả: "${q}"` : 'Tất cả sản phẩm'}
+          </h1>
+          <p className="text-slate-400">
+            {total} sản phẩm{cat && ` • ${categories.find(c => c.slug === cat)?.name}`}
+          </p>
+        </div>
 
-        {/* Main Content */}
-        <div>
-          {/* Header with Sort */}
-          <div 
-            className="mb-4 rounded-2xl p-4"
-            style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.5)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)',
-            }}
-          >
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h1 className="text-lg font-extrabold text-slate-900">
-                  {q ? `Kết quả: "${q}"` : 'Tất cả sản phẩm'}
-                </h1>
-                <div className="mt-1 text-sm text-slate-500">
-                  {total} sản phẩm
-                  {cat && (
-                    <span> • Danh mục: <span className="font-medium text-violet-600">{categories.find(c => c.slug === cat)?.name || cat}</span></span>
-                  )}
+        <div className="grid lg:grid-cols-[280px_1fr] gap-8">
+          {/* Filter Sidebar */}
+          <FilterSidebar categories={categories} totalProducts={total} />
+
+          {/* Main Content */}
+          <div>
+            {products.length === 0 ? (
+              <div className="text-center py-16">
+                <div
+                  className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
+                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                >
+                  <Search className="w-10 h-10 text-slate-500" />
                 </div>
+                <h2 className="text-xl font-semibold text-white mb-2">Không tìm thấy sản phẩm</h2>
+                <p className="text-slate-400">Thử tìm kiếm với từ khóa khác</p>
               </div>
-              
-              {/* Sort Dropdown - integrated in FilterSidebar for mobile, shown here for desktop */}
-              <div className="hidden lg:block">
-                {/* Sort is in FilterSidebar */}
-              </div>
-            </div>
-          </div>
-
-          {products.length === 0 ? (
-            <div className="text-sm text-slate-500 dark:text-slate-400">Không có sản phẩm phù hợp.</div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-              {products.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  p={{
-                    id: p.id,
-                    slug: p.slug,
-                    name: p.name,
-                    duration: p.duration,
-                    listPriceVnd: p.listPriceVnd,
-                    salePriceVnd: p.salePriceVnd,
-                    soldQty: p.soldQty,
-                    imageUrl: p.imageUrl ?? null,
-                    stockQty: p.stockQty,
-                  }}
-                />
-              ))}
-            </div>
-          )}
-          
-          {/* Pagination */}
-          <div className="mt-6">
-            <Pagination basePath="/search" searchParams={sp} page={page} totalPages={totalPages} />
+            ) : (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {products.map((p) => (
+                    <ProductCard
+                      key={p.id}
+                      p={{
+                        id: p.id,
+                        slug: p.slug,
+                        name: p.name,
+                        duration: p.duration,
+                        listPriceVnd: p.listPriceVnd,
+                        salePriceVnd: p.salePriceVnd,
+                        soldQty: p.soldQty,
+                        imageUrl: p.imageUrl ?? null,
+                        stockQty: p.stockQty,
+                      }}
+                    />
+                  ))}
+                </div>
+                
+                <div className="mt-8">
+                  <Pagination basePath="/search" searchParams={sp} page={page} totalPages={totalPages} />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>
